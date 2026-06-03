@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-35";
+  src: url("./fonts/AlibabaPuHuiTi-3-35-Thin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-45";
+  src: url("./fonts/AlibabaPuHuiTi-3-45-Light.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-55";
+  src: url("./fonts/AlibabaPuHuiTi-3-55-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-55L3";
+  src: url("./fonts/AlibabaPuHuiTi-3-55-RegularL3.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-65";
+  src: url("./fonts/AlibabaPuHuiTi-3-65-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-75";
+  src: url("./fonts/AlibabaPuHuiTi-3-75-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-85";
+  src: url("./fonts/AlibabaPuHuiTi-3-85-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-95";
+  src: url("./fonts/AlibabaPuHuiTi-3-95-ExtraBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-105";
+  src: url("./fonts/AlibabaPuHuiTi-3-105-Heavy.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlibabaPuHuiTi-3-115";
+  src: url("./fonts/AlibabaPuHuiTi-3-115-Black.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "AlimamaDongFangDaKai";
+  src: url("./fonts/AlimamaDongFangDaKai-Regular.woff2") format("woff2");
+}
