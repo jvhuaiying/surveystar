@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class UpdateSettingRequestSchema(BaseModel):
+class UpdateWebsiteInfoRequestSchema(BaseModel):
     name: str
     description: str
     icp: str | None

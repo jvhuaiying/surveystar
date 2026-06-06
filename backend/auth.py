@@ -7,15 +7,15 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
 from account.services import get_account_by_id
-from config import get_config
 from database import Account
 from enums.account import AccountKind
+from settings import get_settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def create_access_token(data: dict, remember: bool) -> str:
-    settings = get_config()
+    settings = get_settings()
     to_encode = data.copy()
     if remember:
         expire = datetime.now(timezone.utc) + timedelta(minutes=60 * 24 * 7)
@@ -33,7 +33,7 @@ async def get_current_account(token: Annotated[str, Depends(oauth2_scheme)]) -> 
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        settings = get_config()
+        settings = get_settings()
         payload = jwt.decode(token, settings.secret_key, settings.algorithm)
         account_id = payload.get("sub")
         if account_id is None:
