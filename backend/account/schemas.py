@@ -7,6 +7,7 @@ class SigninRequestSchemas(BaseModel):
     email: EmailStr
     password: str
     kind: AccountKind
+    remember: bool = False
 
 
 class SigninResponseSchemas(BaseModel):

@@ -20,7 +20,7 @@ def signin_router(data: SigninRequestSchemas):
         or not password_hash.verify(data.password, account.password)
     ):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="邮箱或密码错误！")
-    token = create_access_token({"sub": str(account.id)}, False)
+    token = create_access_token({"sub": str(account.id)}, data.remember)
     return SigninResponseSchemas(
         access_token=token,
         id=str(account.id),

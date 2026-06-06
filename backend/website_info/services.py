@@ -44,4 +44,6 @@ def update_website_info_logo(website_info: WebsiteInfo, logo: str) -> WebsiteInf
 
 def ensure_default_website_info():
     if get_website_info() is None:
-        create_website_info(logo="logo.png", name="智研星", description="1", icp=None)
+        create_website_info(
+            logo="logo.png", name="智研星", description="智汇众答·星耀真知", icp=None
+        )
