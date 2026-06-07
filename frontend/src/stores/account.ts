@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import type { SigninResponseSchemas } from "@/types/account";
 
 export const useAccountStore = defineStore("account", () => {
-  const signinInfo = reactive<SigninResponseSchemas>({
+  const accountInfo = reactive<SigninResponseSchemas>({
     access_token: "",
     id: "",
     nickname: "",
@@ -12,18 +12,18 @@ export const useAccountStore = defineStore("account", () => {
     is_active: false,
   });
 
-  const setSigninInfo = (data: SigninResponseSchemas) => {
-    Object.assign(signinInfo, data);
+  const setAccountInfo = (data: SigninResponseSchemas) => {
+    Object.assign(accountInfo, data);
   };
 
-  const clearSigninInfo = () => {
-    signinInfo.access_token = "";
-    signinInfo.id = "";
-    signinInfo.nickname = "";
-    signinInfo.email = "";
-    signinInfo.kind = "user";
-    signinInfo.is_active = false;
+  const clearAccountInfo = () => {
+    accountInfo.access_token = "";
+    accountInfo.id = "";
+    accountInfo.nickname = "";
+    accountInfo.email = "";
+    accountInfo.kind = "user";
+    accountInfo.is_active = false;
   };
 
-  return { signinInfo, setSigninInfo, clearSigninInfo };
+  return { accountInfo, setAccountInfo, clearAccountInfo };
 });

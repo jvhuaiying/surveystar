@@ -30,13 +30,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       signin(formModel)
         .then((res) => {
-          accountStore.setSigninInfo(res);
+          accountStore.setAccountInfo(res);
           ElMessage({
             message: "登录成功！",
             type: "success",
           });
-          if (accountStore.signinInfo.kind === "admin") {
-            router.push({ name: "adminHome" });
+          if (accountStore.accountInfo.kind === "admin") {
+            router.push({ name: "adminAccount" });
           }
         })
         .catch((err) => {
@@ -61,7 +61,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
       <el-input v-model="formModel.email" :prefix-icon="Message" placeholder="请输入邮箱地址" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model="formModel.password" type="password" :prefix-icon="Lock" placeholder="请输入密码" />
+      <el-input
+        v-model="formModel.password"
+        type="password"
+        :prefix-icon="Lock"
+        placeholder="请输入密码"
+      />
     </el-form-item>
     <el-form-item>
       <el-radio-group v-model="formModel.kind">

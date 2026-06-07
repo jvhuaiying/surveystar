@@ -13,3 +13,14 @@ export type SigninResponseSchemas = {
   kind: "admin" | "user";
   is_active: boolean;
 };
+
+export type GetAccountListResponseSchemas = {
+  id: string;
+  nickname: string;
+  email: string;
+  password: string;
+  is_active: boolean;
+  kind: "admin" | "user";
+  created_at: string;
+  updated_at: string;
+};
