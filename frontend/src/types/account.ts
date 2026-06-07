@@ -14,11 +14,18 @@ export type SigninResponseSchemas = {
   is_active: boolean;
 };
 
-export type GetAccountListResponseSchemas = {
-  id: string;
+export type CreateAccountRequestSchemas = {
   nickname: string;
   email: string;
   password: string;
+  is_active: boolean;
+  kind: "admin" | "user";
+};
+
+export type GetAccountResponseSchemas = {
+  id: string;
+  nickname: string;
+  email: string;
   is_active: boolean;
   kind: "admin" | "user";
   created_at: string;

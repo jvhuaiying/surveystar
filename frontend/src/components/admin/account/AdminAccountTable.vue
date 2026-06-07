@@ -1,30 +1,35 @@
 <script setup lang="ts">
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { useQuery } from "@pinia/colada";
+import timezone from "dayjs/plugin/timezone";
 import { getAccountList } from "@/api/account";
-import { onMounted, ref, useTemplateRef, watch } from "vue";
+import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
-import type { GetAccountListResponseSchemas } from "@/types/account";
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const showTable = ref(true);
-const isLoading = ref(true);
 const el = useTemplateRef("el");
 const { width: width0, height: height0 } = useWindowSize();
 const { height: height1 } = useElementSize(el);
-const accountList = ref<GetAccountListResponseSchemas[]>([]);
 
-onMounted(() => {
-  getAccountList()
-    .then((res) => {
-      accountList.value = res;
-    })
-    .catch((err) => {
-      ElMessage({
-        message: err.response?.data.detail || "登录失败！",
-        type: "error",
-      });
-    })
-    .finally(() => {
-      isLoading.value = false;
+const {
+  data: accountList,
+  error,
+  isLoading,
+} = useQuery({
+  key: ["account-list"],
+  query: getAccountList,
+});
+
+watch(error, (err) => {
+  if (err) {
+    ElMessage({
+      message: err.message,
+      type: "error",
     });
+  }
 });
 
 watch([width0, height0], () => {
@@ -41,8 +46,8 @@ watch([width0, height0], () => {
   >
     <div ref="el" v-loading="isLoading" class="w-full flex-1">
       <el-table :height="height1" v-show="showTable" :data="accountList" stripe>
-        <el-table-column prop="nickname" label="昵称" />
-        <el-table-column prop="email" label="邮箱" />
+        <el-table-column prop="nickname" label="昵称" align="center" />
+        <el-table-column prop="email" label="邮箱" align="center" />
         <el-table-column prop="kind" label="类型" align="center">
           <template #default="scope">
             <el-tag :type="scope.row.kind === 'admin' ? 'success' : 'info'">
@@ -55,6 +60,16 @@ watch([width0, height0], () => {
             <el-tag :type="scope.row.is_active ? 'success' : 'danger'">
               {{ scope.row.is_active ? "正常" : "冻结" }}
             </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="created_at" label="注册时间" align="center" width="180">
+          <template #default="scope">
+            {{ dayjs.utc(scope.row.created_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="updated_at" label="修改时间" align="center" width="180">
+          <template #default="scope">
+            {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
       </el-table>

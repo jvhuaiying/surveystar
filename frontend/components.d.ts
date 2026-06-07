@@ -11,6 +11,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminAccountDialog: typeof import('./src/components/admin/account/AdminAccountDialog.vue')['default']
+    AdminAccountForm: typeof import('./src/components/admin/account/AdminAccountForm.vue')['default']
     AdminAccountHeader: typeof import('./src/components/admin/account/AdminAccountHeader.vue')['default']
     AdminAccountTable: typeof import('./src/components/admin/account/AdminAccountTable.vue')['default']
     AdminHeader: typeof import('./src/components/admin/AdminHeader.vue')['default']
@@ -26,6 +28,7 @@ declare module 'vue' {
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']

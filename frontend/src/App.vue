@@ -19,9 +19,9 @@ onMounted(() => {
       link.href = `api/${websiteInfoStore.websiteInfo.logo}`;
       document.head.appendChild(link);
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       ElMessage({
-        message: err.response?.data?.detail || "获取网站信息失败！",
+        message: err.message,
         type: "error",
       });
     });

@@ -21,7 +21,10 @@ const rules: FormRules = {
     { required: true, message: "请输入邮箱地址", trigger: "blur" },
     { type: "email", message: "请输入正确的邮箱地址", trigger: "blur" },
   ],
-  password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+  password: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 8, message: "密码至少8个字符", trigger: "blur" },
+  ],
 };
 
 const submitForm = async (formEl: FormInstance | undefined) => {
@@ -39,9 +42,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             router.push({ name: "adminAccount" });
           }
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           ElMessage({
-            message: err.response?.data.detail || "登录失败！",
+            message: err.message,
             type: "error",
           });
         });
