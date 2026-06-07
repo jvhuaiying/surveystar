@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field
 
-from enums.account import AccountKind
+from enums.account import AccountKind, AccountStatus
 
 
 class SigninRequestSchemas(BaseModel):
@@ -18,14 +18,14 @@ class SigninResponseSchemas(BaseModel):
     nickname: str
     email: EmailStr
     kind: AccountKind
-    is_active: bool
+    status: AccountStatus
 
 
 class CreateAccountRequestSchemas(BaseModel):
     nickname: str = Field(max_length=64)
     email: EmailStr
     password: str = Field(min_length=8)
-    is_active: bool
+    status: AccountStatus
     kind: AccountKind
 
 
@@ -33,7 +33,7 @@ class GetAccountResponseSchemas(BaseModel):
     id: str
     nickname: str
     email: EmailStr
-    is_active: bool
+    status: AccountStatus
     kind: AccountKind
     created_at: datetime
     updated_at: datetime

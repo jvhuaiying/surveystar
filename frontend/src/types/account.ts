@@ -11,14 +11,14 @@ export type SigninResponseSchemas = {
   nickname: string;
   email: string;
   kind: "admin" | "user";
-  is_active: boolean;
+  status: "active" | "disabled" | "deleted";
 };
 
 export type CreateAccountRequestSchemas = {
   nickname: string;
   email: string;
   password: string;
-  is_active: boolean;
+  status: "active" | "disabled" | "deleted";
   kind: "admin" | "user";
 };
 
@@ -26,7 +26,7 @@ export type GetAccountResponseSchemas = {
   id: string;
   nickname: string;
   email: string;
-  is_active: boolean;
+  status: "active" | "disabled" | "deleted";
   kind: "admin" | "user";
   created_at: string;
   updated_at: string;

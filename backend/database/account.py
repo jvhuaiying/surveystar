@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import EmailStr
 from sqlmodel import Field, SQLModel
 
-from enums.account import AccountKind
+from enums.account import AccountKind, AccountStatus
 
 
 class Account(SQLModel, table=True):
@@ -12,7 +12,7 @@ class Account(SQLModel, table=True):
     nickname: str = Field(max_length=64)
     email: EmailStr = Field(unique=True)
     password: str = Field(max_length=128)
-    is_active: bool
+    status: AccountStatus
     kind: AccountKind
     created_at: datetime
     updated_at: datetime

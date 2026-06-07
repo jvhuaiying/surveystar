@@ -8,7 +8,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from account.services import get_account_by_id
 from database import Account
-from enums.account import AccountKind
+from enums.account import AccountKind, AccountStatus
 from settings import get_settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -45,7 +45,7 @@ async def get_current_account(token: Annotated[str, Depends(oauth2_scheme)]) -> 
     except ValueError, TypeError:
         raise credentials_exception
     account = get_account_by_id(account_uuid)
-    if account is None or not account.is_active:
+    if account is None or account.status != AccountStatus.active:
         raise credentials_exception
     return account
 

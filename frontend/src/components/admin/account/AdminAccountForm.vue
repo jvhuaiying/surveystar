@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { useMutation, useQueryCache } from "@pinia/colada";
-import { useAccountDialogStore } from "@/stores/account-dialog";
 import { createAccount } from "@/api/account";
+import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
-import { Check, Close, Lock, Message, RefreshRight, User } from "@element-plus/icons-vue";
+import { useAccountDialogStore } from "@/stores/account-dialog";
 import type { CreateAccountRequestSchemas } from "@/types/account";
+import { Check, Close, Lock, Message, RefreshRight, User } from "@element-plus/icons-vue";
 
-const dialogStore = useAccountDialogStore();
 const formRef = ref<FormInstance>();
 const queryCache = useQueryCache();
+const dialogStore = useAccountDialogStore();
 
 const formModel = reactive<CreateAccountRequestSchemas>({
   nickname: "",
   email: "",
   password: "",
-  is_active: true,
+  status: "active",
   kind: "user",
 });
+
 const rules: FormRules = {
   nickname: [
     { required: true, message: "请输入昵称", trigger: "blur" },
@@ -38,7 +39,6 @@ const { mutate, isLoading } = useMutation({
   mutation: (data: CreateAccountRequestSchemas) => createAccount(data),
   onSuccess: () => {
     ElMessage({ message: "创建账号成功！", type: "success" });
-    formRef.value?.resetFields();
     dialogStore.close();
   },
   onError: (err: Error) => {
@@ -64,6 +64,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
 const closeDialog = () => {
   dialogStore.close();
 };
+
+dialogStore.$subscribe(() => {
+  resetForm(formRef.value);
+});
 </script>
 
 <template>
@@ -89,8 +93,11 @@ const closeDialog = () => {
           <el-radio value="admin">管理员</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item prop="is_active">
-        <el-switch v-model="formModel.is_active" active-text="启用" inactive-text="冻结" />
+      <el-form-item prop="status">
+        <el-radio-group v-model="formModel.status">
+          <el-radio value="active">活跃</el-radio>
+          <el-radio value="disabled">禁用</el-radio>
+        </el-radio-group>
       </el-form-item>
     </div>
 

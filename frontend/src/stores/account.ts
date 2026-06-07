@@ -9,7 +9,7 @@ export const useAccountStore = defineStore("account", () => {
     nickname: "",
     email: "",
     kind: "user",
-    is_active: false,
+    status: "active",
   });
 
   const setAccountInfo = (data: SigninResponseSchemas) => {
@@ -22,7 +22,7 @@ export const useAccountStore = defineStore("account", () => {
     accountInfo.nickname = "";
     accountInfo.email = "";
     accountInfo.kind = "user";
-    accountInfo.is_active = false;
+    accountInfo.status = "active";
   };
 
   return { accountInfo, setAccountInfo, clearAccountInfo };

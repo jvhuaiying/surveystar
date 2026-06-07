@@ -8,7 +8,7 @@ from sqlmodel import Session, select
 
 from database import engine
 from database.account import Account
-from enums.account import AccountKind
+from enums.account import AccountKind, AccountStatus
 
 password_hash = PasswordHash.recommended()
 
@@ -17,7 +17,7 @@ def create_account(
     nickname: str,
     email: EmailStr,
     password: str,
-    is_active: bool,
+    status: AccountStatus,
     kind: AccountKind,
     created_at: datetime,
     updated_at: datetime,
@@ -26,7 +26,7 @@ def create_account(
         nickname=nickname,
         email=email,
         password=password,
-        is_active=is_active,
+        status=status,
         kind=kind,
         created_at=created_at,
         updated_at=updated_at,
@@ -40,7 +40,7 @@ def create_account(
 
 def get_account() -> Sequence[Account]:
     with Session(engine) as session:
-        statement = select(Account)
+        statement = select(Account).where(Account.status != AccountStatus.deleted)
         return session.exec(statement).all()
 
 
@@ -72,7 +72,7 @@ def ensure_default_admin() -> None:
         nickname="admin",
         email="admin@admin.com",
         password=hashed_password,
-        is_active=True,
+        status=AccountStatus.active,
         kind=AccountKind.admin,
         created_at=now,
         updated_at=now,

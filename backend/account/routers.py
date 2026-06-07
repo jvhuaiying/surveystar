@@ -17,6 +17,7 @@ from account.services import (
 )
 from auth import create_access_token, get_current_admin
 from database import Account
+from enums.account import AccountStatus
 
 router = APIRouter(prefix="/account", tags=["账号管理"])
 
@@ -26,7 +27,7 @@ def signin_router(data: SigninRequestSchemas):
     account = get_account_by_email(data.email)
     if (
         account is None
-        or not account.is_active
+        or account.status != AccountStatus.active
         or account.kind != data.kind
         or not password_hash.verify(data.password, account.password)
     ):
@@ -38,7 +39,7 @@ def signin_router(data: SigninRequestSchemas):
         nickname=account.nickname,
         email=account.email,
         kind=account.kind,
-        is_active=account.is_active,
+        status=account.status,
     )
 
 
@@ -56,7 +57,7 @@ def create_account_router(
         nickname=data.nickname,
         email=data.email,
         password=hashed_password,
-        is_active=data.is_active,
+        status=data.status,
         kind=data.kind,
         created_at=now,
         updated_at=now,
@@ -65,7 +66,7 @@ def create_account_router(
         id=str(account0.id),
         nickname=account0.nickname,
         email=account0.email,
-        is_active=account0.is_active,
+        status=account0.status,
         kind=account0.kind,
         created_at=account0.created_at,
         updated_at=account0.updated_at,
@@ -82,7 +83,7 @@ def get_account_router(
             id=str(a.id),
             nickname=a.nickname,
             email=a.email,
-            is_active=a.is_active,
+            status=a.status,
             kind=a.kind,
             created_at=a.created_at,
             updated_at=a.updated_at,

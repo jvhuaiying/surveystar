@@ -55,10 +55,10 @@ watch([width0, height0], () => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="is_active" label="状态" align="center">
+        <el-table-column prop="status" label="状态" align="center">
           <template #default="scope">
-            <el-tag :type="scope.row.is_active ? 'success' : 'danger'">
-              {{ scope.row.is_active ? "正常" : "冻结" }}
+            <el-tag :type="scope.row.status === 'active' ? 'success' : 'danger'">
+              {{ scope.row.status === "active" ? "活跃" : "禁用" }}
             </el-tag>
           </template>
         </el-table-column>
