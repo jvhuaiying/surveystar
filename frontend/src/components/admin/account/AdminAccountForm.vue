@@ -4,7 +4,7 @@ import { createAccount } from "@/api/account";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAccountDialogStore } from "@/stores/account-dialog";
-import type { CreateAccountRequestSchemas } from "@/types/account";
+import type { CreateAccountRequestSchemas, MessageResponseSchemas } from "@/types/account";
 import { Check, Close, Lock, Message, RefreshRight, User } from "@element-plus/icons-vue";
 
 const formRef = ref<FormInstance>();
@@ -37,8 +37,8 @@ const rules: FormRules = {
 const { mutate, isLoading } = useMutation({
   key: ["create-account"],
   mutation: (data: CreateAccountRequestSchemas) => createAccount(data),
-  onSuccess: () => {
-    ElMessage({ message: "创建账号成功！", type: "success" });
+  onSuccess: (data: MessageResponseSchemas) => {
+    ElMessage({ message: data.detail, type: "success" });
     dialogStore.close();
   },
   onError: (err: Error) => {

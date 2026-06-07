@@ -46,20 +46,41 @@ def get_account() -> Sequence[Account]:
 
 def get_account_by_email(email: EmailStr) -> Account | None:
     with Session(engine) as session:
-        statement = select(Account).where(Account.email == email)
+        statement = select(Account).where(
+            Account.email == email, Account.status != AccountStatus.deleted
+        )
         return session.exec(statement).first()
 
 
 def get_account_by_id(id: UUID) -> Account | None:
     with Session(engine) as session:
-        statement = select(Account).where(Account.id == id)
+        statement = select(Account).where(
+            Account.id == id, Account.status != AccountStatus.deleted
+        )
         return session.exec(statement).first()
 
 
 def get_accounts_by_kind(kind: AccountKind) -> Sequence[Account]:
     with Session(engine) as session:
-        statement = select(Account).where(Account.kind == kind)
+        statement = select(Account).where(
+            Account.kind == kind, Account.status != AccountStatus.deleted
+        )
         return session.exec(statement).all()
+
+
+def get_active_admin_size() -> int:
+    with Session(engine) as session:
+        statement = select(Account).where(
+            Account.kind == AccountKind.admin, Account.status == AccountStatus.active
+        )
+        return len(session.exec(statement).all())
+
+
+def update_account_status(account: Account, status: AccountStatus):
+    account.status = status
+    with Session(engine) as session:
+        session.add(account)
+        session.commit()
 
 
 def ensure_default_admin() -> None:

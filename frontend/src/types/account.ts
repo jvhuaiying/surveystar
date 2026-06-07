@@ -22,6 +22,10 @@ export type CreateAccountRequestSchemas = {
   kind: "admin" | "user";
 };
 
+export type MessageResponseSchemas = {
+  detail: string;
+};
+
 export type GetAccountResponseSchemas = {
   id: string;
   nickname: string;

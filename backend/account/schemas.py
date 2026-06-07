@@ -29,6 +29,10 @@ class CreateAccountRequestSchemas(BaseModel):
     kind: AccountKind
 
 
+class MessageResponseSchemas(BaseModel):
+    detail: str
+
+
 class GetAccountResponseSchemas(BaseModel):
     id: str
     nickname: str

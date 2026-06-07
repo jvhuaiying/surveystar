@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useQuery } from "@pinia/colada";
+import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 import timezone from "dayjs/plugin/timezone";
-import { getAccountList } from "@/api/account";
+import { activateAccount, deleteAccount, disableAccount, getAccountList } from "@/api/account";
 import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
+import { Check, Delete, Remove } from "@element-plus/icons-vue";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 const showTable = ref(true);
 const el = useTemplateRef("el");
-const { width: width0, height: height0 } = useWindowSize();
-const { height: height1 } = useElementSize(el);
+const { height: height0 } = useElementSize(el);
+const { width: width1, height: height1 } = useWindowSize();
+const queryCache = useQueryCache();
 
 const {
   data: accountList,
@@ -32,12 +34,50 @@ watch(error, (err) => {
   }
 });
 
-watch([width0, height0], () => {
+watch([width1, height1], () => {
   showTable.value = false;
   setTimeout(() => {
     showTable.value = true;
   }, 100);
 });
+
+const { mutate: mutateDisable } = useMutation({
+  key: ["disable-account"],
+  mutation: (id: string) => disableAccount(id),
+  onSuccess: (data) => ElMessage({ message: data.detail, type: "success" }),
+  onError: (err) => ElMessage({ message: (err as Error).message, type: "error" }),
+  onSettled: () => queryCache.invalidateQueries({ key: ["account-list"] }),
+});
+
+const { mutate: mutateActivate } = useMutation({
+  key: ["activate-account"],
+  mutation: (id: string) => activateAccount(id),
+  onSuccess: (data) => ElMessage({ message: data.detail, type: "success" }),
+  onError: (err) => ElMessage({ message: err.message, type: "error" }),
+  onSettled: () => queryCache.invalidateQueries({ key: ["account-list"] }),
+});
+
+const { mutate: mutateDelete } = useMutation({
+  key: ["delete-account"],
+  mutation: (id: string) => deleteAccount(id),
+  onSuccess: (data) => ElMessage({ message: data.detail, type: "success" }),
+  onError: (err) => ElMessage({ message: err.message, type: "error" }),
+  onSettled: () => queryCache.invalidateQueries({ key: ["account-list"] }),
+});
+
+const handleDisable = (id: string) => mutateDisable(id);
+
+const handleActivate = (id: string) => mutateActivate(id);
+
+const handleDelete = (id: string) => {
+  ElMessageBox.confirm("确定要删除该账号吗？此操作不可恢复！", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    mutateDelete(id);
+  });
+};
 </script>
 
 <template>
@@ -45,7 +85,7 @@ watch([width0, height0], () => {
     class="p-4 w-full flex-1 flex flex-col justify-center items-center bg-slate-200 shadow-md rounded-md"
   >
     <div ref="el" v-loading="isLoading" class="w-full flex-1">
-      <el-table :height="height1" v-show="showTable" :data="accountList" stripe>
+      <el-table :height="height0" v-show="showTable" :data="accountList" stripe>
         <el-table-column prop="nickname" label="昵称" align="center" />
         <el-table-column prop="email" label="邮箱" align="center" />
         <el-table-column prop="kind" label="类型" align="center">
@@ -70,6 +110,36 @@ watch([width0, height0], () => {
         <el-table-column prop="updated_at" label="修改时间" align="center" width="180">
           <template #default="scope">
             {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="240">
+          <template #default="scope">
+            <el-button
+              v-if="scope.row.status === 'active'"
+              type="warning"
+              size="small"
+              :icon="Remove"
+              @click="handleDisable(scope.row.id)"
+            >
+              禁用
+            </el-button>
+            <el-button
+              v-if="scope.row.status === 'disabled'"
+              type="primary"
+              size="small"
+              :icon="Check"
+              @click="handleActivate(scope.row.id)"
+            >
+              激活
+            </el-button>
+            <el-button
+              type="danger"
+              size="small"
+              :icon="Delete"
+              @click="handleDelete(scope.row.id)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
