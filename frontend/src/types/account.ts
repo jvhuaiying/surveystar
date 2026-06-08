@@ -22,9 +22,18 @@ export type CreateAccountRequestSchemas = {
   kind: "admin" | "user";
 };
 
+export type UpdateAccountRequestSchemas = {
+  nickname: string;
+  email: string;
+  status: "active" | "disabled" | "deleted";
+  kind: "admin" | "user";
+};
+
 export type MessageResponseSchemas = {
   detail: string;
 };
+
+export type AccountDialogMode = "create" | "edit";
 
 export type GetAccountResponseSchemas = {
   id: string;

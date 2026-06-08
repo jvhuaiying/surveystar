@@ -29,6 +29,13 @@ class CreateAccountRequestSchemas(BaseModel):
     kind: AccountKind
 
 
+class UpdateAccountRequestSchemas(BaseModel):
+    nickname: str = Field(max_length=64)
+    email: EmailStr
+    status: AccountStatus
+    kind: AccountKind
+
+
 class MessageResponseSchemas(BaseModel):
     detail: str
 

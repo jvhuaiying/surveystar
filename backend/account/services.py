@@ -83,6 +83,25 @@ def update_account_status(account: Account, status: AccountStatus):
         session.commit()
 
 
+def update_account(
+    account: Account,
+    nickname: str,
+    email: EmailStr,
+    status: AccountStatus,
+    kind: AccountKind,
+) -> Account:
+    account.nickname = nickname
+    account.email = email
+    account.status = status
+    account.kind = kind
+    account.updated_at = datetime.now(timezone.utc)
+    with Session(engine) as session:
+        session.add(account)
+        session.commit()
+        session.refresh(account)
+    return account
+
+
 def ensure_default_admin() -> None:
     admin = get_accounts_by_kind(AccountKind.admin)
     if admin:

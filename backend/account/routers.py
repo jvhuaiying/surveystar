@@ -10,6 +10,7 @@ from account.schemas import (
     MessageResponseSchemas,
     SigninRequestSchemas,
     SigninResponseSchemas,
+    UpdateAccountRequestSchemas,
 )
 from account.services import (
     create_account,
@@ -18,6 +19,7 @@ from account.services import (
     get_account_by_id,
     get_active_admin_size,
     password_hash,
+    update_account,
     update_account_status,
 )
 from auth import create_access_token, get_current_admin
@@ -87,6 +89,53 @@ def get_account_router(
         )
         for account0 in accounts
     ]
+
+
+@router.get("/{id}", response_model=GetAccountResponseSchemas)
+def get_account_by_id_router(
+    id: UUID,
+    account: Annotated[Account, Depends(get_current_admin)],
+) -> GetAccountResponseSchemas:
+    target = get_account_by_id(id)
+    if target is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="账号不存在！")
+    return GetAccountResponseSchemas(
+        id=str(target.id),
+        nickname=target.nickname,
+        email=target.email,
+        status=target.status,
+        kind=target.kind,
+        created_at=target.created_at,
+        updated_at=target.updated_at,
+    )
+
+
+@router.patch("/{id}", response_model=MessageResponseSchemas)
+def update_account_router(
+    id: UUID,
+    data: UpdateAccountRequestSchemas,
+    account: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
+    target = get_account_by_id(id)
+    if target is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="账号不存在！")
+    if target.email != data.email:
+        existing = get_account_by_email(data.email)
+        if existing is not None:
+            raise HTTPException(status.HTTP_409_CONFLICT, detail="邮箱已被注册！")
+    if target.kind == AccountKind.admin and data.kind != AccountKind.admin:
+        if get_active_admin_size() < 2:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST, detail="处于激活状态的管理员账号不足！"
+            )
+    update_account(
+        target,
+        nickname=data.nickname,
+        email=data.email,
+        status=data.status,
+        kind=data.kind,
+    )
+    return MessageResponseSchemas(detail="账号修改成功！")
 
 
 @router.patch("/{id}/disable", response_model=MessageResponseSchemas)

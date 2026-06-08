@@ -42,7 +42,7 @@ async def get_current_account(token: Annotated[str, Depends(oauth2_scheme)]) -> 
         raise credentials_exception
     try:
         account_uuid = UUID(account_id)
-    except ValueError, TypeError:
+    except (ValueError, TypeError):
         raise credentials_exception
     account = get_account_by_id(account_uuid)
     if account is None or account.status != AccountStatus.active:

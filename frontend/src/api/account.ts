@@ -6,6 +6,7 @@ import type {
   MessageResponseSchemas,
   SigninRequestSchemas,
   SigninResponseSchemas,
+  UpdateAccountRequestSchemas,
 } from "@/types/account";
 
 export const signin = (data: SigninRequestSchemas): Promise<SigninResponseSchemas> => {
@@ -17,7 +18,9 @@ export const signin = (data: SigninRequestSchemas): Promise<SigninResponseSchema
     });
 };
 
-export const createAccount = (data: CreateAccountRequestSchemas): Promise<MessageResponseSchemas> => {
+export const createAccount = (
+  data: CreateAccountRequestSchemas,
+): Promise<MessageResponseSchemas> => {
   return request
     .post("/account/", data)
     .then((res) => res.data)
@@ -32,6 +35,27 @@ export const getAccountList = (): Promise<GetAccountResponseSchemas[]> => {
     .then((res) => res.data)
     .catch((err: AxiosError<{ detail: string }>) => {
       throw new Error(err.response?.data?.detail || "获取账号列表失败！");
+    });
+};
+
+export const getAccountById = (id: string): Promise<GetAccountResponseSchemas> => {
+  return request
+    .get(`/account/${id}`)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "获取账号信息失败！");
+    });
+};
+
+export const updateAccount = (
+  id: string,
+  data: UpdateAccountRequestSchemas,
+): Promise<MessageResponseSchemas> => {
+  return request
+    .patch(`/account/${id}`, data)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "修改账号信息失败！");
     });
 };
 
