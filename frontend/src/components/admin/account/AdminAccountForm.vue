@@ -7,8 +7,8 @@ import { useAccountDialogStore } from "@/stores/account-dialog";
 import type { CreateAccountRequestSchemas, MessageResponseSchemas } from "@/types/account";
 import { Check, Close, Lock, Message, RefreshRight, User } from "@element-plus/icons-vue";
 
-const formRef = ref<FormInstance>();
 const queryCache = useQueryCache();
+const formRef = ref<FormInstance>();
 const dialogStore = useAccountDialogStore();
 
 const formModel = reactive<CreateAccountRequestSchemas>({

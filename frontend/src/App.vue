@@ -1,35 +1,29 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { watch } from "vue";
 import { RouterView } from "vue-router";
+import { useQuery } from "@pinia/colada";
+import { useHead } from "@unhead/vue";
 import { ElConfigProvider } from "element-plus";
 import { getWebsiteInfo } from "@/api/website-info";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-import { useWebsiteInfoStore } from "@/stores/website-info";
 
-const websiteInfoStore = useWebsiteInfoStore();
-onMounted(() => {
-  getWebsiteInfo()
-    .then((res) => {
-      websiteInfoStore.setWebsiteInfo(res);
-      const titleEl = document.createElement("title");
-      titleEl.textContent = websiteInfoStore.websiteInfo.name;
-      document.head.appendChild(titleEl);
-      const link = document.createElement("link");
-      link.rel = "icon";
-      link.href = `api/${websiteInfoStore.websiteInfo.logo}`;
-      document.head.appendChild(link);
-    })
-    .catch((err: Error) => {
-      ElMessage({
-        message: err.message,
-        type: "error",
-      });
-    });
+const { data, isLoading, error } = useQuery({
+  key: ["websiteInfo"],
+  query: getWebsiteInfo,
+});
+
+useHead({
+  title: () => data.value?.name ?? "",
+  link: () => (data.value?.logo ? [{ rel: "icon", href: `api/${data.value.logo}` }] : []),
+});
+
+watch(error, (err) => {
+  if (err) ElMessage({ message: err.message, type: "error" });
 });
 </script>
 
 <template>
   <el-config-provider :locale="zhCn">
-    <RouterView />
+    <RouterView v-loading="isLoading" />
   </el-config-provider>
 </template>
