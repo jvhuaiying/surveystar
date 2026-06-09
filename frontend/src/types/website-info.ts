@@ -5,3 +5,9 @@ export type WebsiteInfoResponseSchemas = {
   description: string;
   icp: string | null;
 };
+
+export type UpdateWebsiteInfoRequestSchemas = {
+  name: string;
+  description: string;
+  icp: string | null;
+};

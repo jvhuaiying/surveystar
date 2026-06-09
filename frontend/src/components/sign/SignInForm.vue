@@ -39,7 +39,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             type: "success",
           });
           if (accountStore.accountInfo.kind === "admin") {
-            router.push({ name: "adminAccount" });
+            router.push({ name: "adminWebInfo" });
           }
         })
         .catch((err: Error) => {

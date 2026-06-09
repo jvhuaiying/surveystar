@@ -1,8 +1,12 @@
 from pathlib import Path
+from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 
+from account.schemas import MessageResponseSchemas
+from auth import get_current_admin
+from database import Account
 from database.website_info import WebsiteInfo
 from settings import get_settings
 from website_info.schemas import UpdateWebsiteInfoRequestSchema
@@ -26,18 +30,23 @@ def get_website_info_router() -> WebsiteInfo:
     return website_info
 
 
-@router.put("/", response_model=WebsiteInfo)
-def update_website_info_router(data: UpdateWebsiteInfoRequestSchema):
+@router.put("/", response_model=MessageResponseSchemas)
+def update_website_info_router(
+    data: UpdateWebsiteInfoRequestSchema,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
     info0 = get_website_info()
     if info0 is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "系统设置不存在！")
-    info1 = update_website_info(info0, data.name, data.description, data.icp)
-    info1.logo = "static/logo/" + info1.logo
-    return info1
+    update_website_info(info0, data.name, data.description, data.icp)
+    return MessageResponseSchemas(detail="网站信息修改成功！")
 
 
-@router.post("/logo")
-async def update_website_info_logo_router(logo: UploadFile):
+@router.post("/logo/", response_model=MessageResponseSchemas)
+async def update_website_info_logo_router(
+    logo: UploadFile,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
     settings = get_settings()
     filename = logo.filename
     info0 = get_website_info()
@@ -49,6 +58,5 @@ async def update_website_info_logo_router(logo: UploadFile):
     file_path = str(uuid4()) + file_ext
     with open((settings.logo_folder / file_path), "wb") as f:
         f.write(await logo.read())
-    info1 = update_website_info_logo(info0, file_path)
-    info1.logo = "static/logo/" + info1.logo
-    return info1
+    update_website_info_logo(info0, file_path)
+    return MessageResponseSchemas(detail="LOGO上传成功！")
