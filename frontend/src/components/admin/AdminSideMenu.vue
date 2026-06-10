@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User, Monitor } from "@element-plus/icons-vue";
+import { Connection, Cpu, Monitor, User } from "@element-plus/icons-vue";
 </script>
 
 <template>
@@ -12,6 +12,16 @@ import { User, Monitor } from "@element-plus/icons-vue";
       <el-icon><User /></el-icon>
       <template #title>账号管理</template>
     </el-menu-item>
+    <el-sub-menu index="2">
+      <template #title>
+        <el-icon><Cpu /></el-icon>
+        <span>模型管理</span>
+      </template>
+      <el-menu-item index="/admin/ai-provider">
+        <el-icon><Connection /></el-icon>
+        <template #title>提供商管理</template>
+      </el-menu-item>
+    </el-sub-menu>
   </el-menu>
 </template>
 
