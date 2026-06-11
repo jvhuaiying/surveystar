@@ -32,7 +32,7 @@ const onClose = () => {
       <h1 class="text-2xl font-[AlimamaDongFangDaKai] text-center">
         {{ dialogStore.mode === "create" ? "新增供应商" : "编辑供应商" }}
       </h1>
-      <AdminAiProviderForm v-show="dialogStore.mode === 'create'" />
+      <AdminAiProviderForm model="dialog" v-show="dialogStore.mode === 'create'" />
       <AdminAiProviderEditForm v-show="dialogStore.mode === 'edit'" />
     </div>
   </dialog>

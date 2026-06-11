@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from account.routers import router as account_router
 from account.services import ensure_default_admin
 from ai_model.routers import router as ai_model_router
+from ai_provider.routers import router as ai_provider_router
 from database import create_db_and_tables
 from website_info.routers import router as website_info_router
 from website_info.services import ensure_default_website_info
@@ -22,6 +23,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(account_router)
 app.include_router(ai_model_router)
+app.include_router(ai_provider_router)
 app.include_router(website_info_router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

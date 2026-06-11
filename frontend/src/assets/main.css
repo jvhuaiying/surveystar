@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+.el-dialog,
+.el-drawer__header,
+.el-drawer__body {
+  padding: 0% !important;
+}
+
+.el-drawer__header {
+  margin: 0% !important;
+}
+
 @font-face {
   font-family: "AlibabaPuHuiTi-3-35";
   src: url("./fonts/AlibabaPuHuiTi-3-35-Thin.woff2") format("woff2");

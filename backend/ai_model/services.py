@@ -1,70 +1,44 @@
-import uuid
 from datetime import datetime, timezone
 from typing import Sequence
+from uuid import UUID
 
 from sqlmodel import Session, select
 
-from database import engine
-from database.ai_model import AiProvider
+from database import AiModel, engine
 
 
-def create_ai_provider(
+def create_ai_model(
     name: str,
+    api_key: str,
+    base_url: str,
     is_active: bool,
-    created_at: datetime,
-    updated_at: datetime,
-) -> AiProvider:
-    provider = AiProvider(
+    model_type: str,
+    provider_id: UUID,
+):
+    now = datetime.now(timezone.utc)
+    ai_model = AiModel(
         name=name,
+        api_key=api_key,
+        base_url=base_url,
         is_active=is_active,
-        created_at=created_at,
-        updated_at=updated_at,
+        model_type=model_type,
+        provider_id=provider_id,
+        created_at=now,
+        updated_at=now,
     )
     with Session(engine) as session:
-        session.add(provider)
+        session.add(ai_model)
         session.commit()
-        session.refresh(provider)
-    return provider
+        session.refresh(ai_model)
 
 
-def get_ai_provider_by_name(name: str) -> AiProvider | None:
+def get_ai_model_by_name(name: str) -> AiModel | None:
     with Session(engine) as session:
-        statement = select(AiProvider).where(AiProvider.name == name)
+        statement = select(AiModel).where(AiModel.name == name)
         return session.exec(statement).first()
 
 
-def get_ai_providers() -> Sequence[AiProvider]:
+def get_ai_models() -> Sequence[AiModel]:
     with Session(engine) as session:
-        statement = select(AiProvider)
+        statement = select(AiModel)
         return session.exec(statement).all()
-
-
-def get_ai_provider_by_id(id: uuid.UUID) -> AiProvider | None:
-    with Session(engine) as session:
-        statement = select(AiProvider).where(AiProvider.id == id)
-        return session.exec(statement).first()
-
-
-def update_ai_provider_status(provider: AiProvider, is_active: bool) -> AiProvider:
-    provider.is_active = is_active
-    provider.updated_at = datetime.now(timezone.utc)
-    with Session(engine) as session:
-        session.add(provider)
-        session.commit()
-        session.refresh(provider)
-    return provider
-
-
-def update_ai_provider(
-    provider: AiProvider,
-    name: str,
-    is_active: bool,
-) -> AiProvider:
-    provider.name = name
-    provider.is_active = is_active
-    provider.updated_at = datetime.now(timezone.utc)
-    with Session(engine) as session:
-        session.add(provider)
-        session.commit()
-        session.refresh(provider)
-    return provider

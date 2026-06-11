@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { getAiProviderById, updateAiProvider } from "@/api/ai-model";
+import { getAiProviderById, updateAiProvider } from "@/api/ai-provider";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
-import type { MessageResponseSchemas, UpdateAiProviderRequestSchemas } from "@/types/ai-model";
+import type { MessageResponseSchemas, UpdateAiProviderRequestSchemas } from "@/types/ai-provider";
 import { Check, Close, RefreshRight } from "@element-plus/icons-vue";
 
 const formRef = ref<FormInstance>();

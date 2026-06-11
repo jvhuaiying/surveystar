@@ -36,6 +36,11 @@ const router = createRouter({
           name: "adminAiProvider",
           component: () => import("@/views/admin/AdminAiProviderView.vue"),
         },
+        {
+          path: "ai-model",
+          name: "adminAiModel",
+          component: () => import("@/views/admin/AdminAiModelView.vue"),
+        },
       ],
     },
   ],

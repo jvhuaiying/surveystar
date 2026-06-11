@@ -1,67 +1,27 @@
 import request from "@/utils/request";
 import type { AxiosError } from "axios";
 import type {
-  CreateAiProviderRequestSchemas,
-  GetAiProviderResponseSchemas,
+  CreateAiModelRequestSchemas,
+  GetAiModelResponseSchemas,
   MessageResponseSchemas,
-  UpdateAiProviderRequestSchemas,
 } from "@/types/ai-model";
 
-export const createAiProvider = (
-  data: CreateAiProviderRequestSchemas,
+export const createAiModel = (
+  data: CreateAiModelRequestSchemas,
 ): Promise<MessageResponseSchemas> => {
   return request
-    .post("/ai-model/provider/", data)
+    .post("/ai-model/", data)
     .then((res) => res.data)
     .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "创建提供商失败！");
+      throw new Error(err.response?.data?.detail || "创建模型失败！");
     });
 };
 
-export const getAiProviderList = (): Promise<GetAiProviderResponseSchemas[]> => {
+export const getAiModelList = (): Promise<GetAiModelResponseSchemas[]> => {
   return request
-    .get("/ai-model/provider/")
+    .get("/ai-model/")
     .then((res) => res.data)
     .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "获取提供商列表失败！");
-    });
-};
-
-export const disableAiProvider = (id: string): Promise<MessageResponseSchemas> => {
-  return request
-    .patch(`/ai-model/provider/${id}/disable`)
-    .then((res) => res.data)
-    .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "禁用提供商失败！");
-    });
-};
-
-export const activateAiProvider = (id: string): Promise<MessageResponseSchemas> => {
-  return request
-    .patch(`/ai-model/provider/${id}/activate`)
-    .then((res) => res.data)
-    .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "启用提供商失败！");
-    });
-};
-
-export const getAiProviderById = (id: string): Promise<GetAiProviderResponseSchemas> => {
-  return request
-    .get(`/ai-model/provider/${id}`)
-    .then((res) => res.data)
-    .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "获取提供商信息失败！");
-    });
-};
-
-export const updateAiProvider = (
-  id: string,
-  data: UpdateAiProviderRequestSchemas,
-): Promise<MessageResponseSchemas> => {
-  return request
-    .patch(`/ai-model/provider/${id}`, data)
-    .then((res) => res.data)
-    .catch((err: AxiosError<{ detail: string }>) => {
-      throw new Error(err.response?.data?.detail || "修改提供商失败！");
+      throw new Error(err.response?.data?.detail || "获取模型列表失败！");
     });
 };

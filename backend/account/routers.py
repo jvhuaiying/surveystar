@@ -58,7 +58,6 @@ def create_account_router(
     existing = get_account_by_email(data.email)
     if existing is not None:
         raise HTTPException(status.HTTP_409_CONFLICT, detail="邮箱已注册！")
-    now = datetime.now(timezone.utc)
     hashed_password = password_hash.hash(data.password)
     create_account(
         nickname=data.nickname,
@@ -66,8 +65,6 @@ def create_account_router(
         password=hashed_password,
         status=data.status,
         kind=data.kind,
-        created_at=now,
-        updated_at=now,
     )
     return MessageResponseSchemas(detail="账号创建成功！")
 

@@ -1,7 +1,8 @@
 from sqlmodel import SQLModel, create_engine
 
 from database.account import Account
-from database.ai_model import AiModel, AiProvider
+from database.ai_model import AiModel
+from database.ai_provider import AiProvider
 from database.website_info import WebsiteInfo
 
 engine = create_engine(

@@ -19,17 +19,16 @@ def create_account(
     password: str,
     status: AccountStatus,
     kind: AccountKind,
-    created_at: datetime,
-    updated_at: datetime,
 ) -> Account:
+    now = datetime.now(timezone.utc)
     account = Account(
         nickname=nickname,
         email=email,
         password=password,
         status=status,
         kind=kind,
-        created_at=created_at,
-        updated_at=updated_at,
+        created_at=now,
+        updated_at=now,
     )
     with Session(engine) as session:
         session.add(account)
@@ -106,7 +105,6 @@ def ensure_default_admin() -> None:
     admin = get_accounts_by_kind(AccountKind.admin)
     if admin:
         return
-    now = datetime.now(timezone.utc)
     hashed_password = password_hash.hash("admin123")
     create_account(
         nickname="admin",
@@ -114,6 +112,4 @@ def ensure_default_admin() -> None:
         password=hashed_password,
         status=AccountStatus.active,
         kind=AccountKind.admin,
-        created_at=now,
-        updated_at=now,
     )

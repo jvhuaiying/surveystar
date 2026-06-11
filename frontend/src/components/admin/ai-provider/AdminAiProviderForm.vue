@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { createAiProvider } from "@/api/ai-model";
+import { createAiProvider } from "@/api/ai-provider";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
+import { useAiModelDrawerStore } from "@/stores/ai-model-drawer";
 import { Check, Close, RefreshRight } from "@element-plus/icons-vue";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
-import type { CreateAiProviderRequestSchemas, MessageResponseSchemas } from "@/types/ai-model";
+import type { CreateAiProviderRequestSchemas, MessageResponseSchemas } from "@/types/ai-provider";
 
 const queryCache = useQueryCache();
 const formRef = ref<FormInstance>();
+const drawerStore = useAiModelDrawerStore();
 const dialogStore = useAiProviderDialogStore();
+const prop = defineProps<{ model: "dialog" | "drawer" }>();
 
 const formModel = reactive<CreateAiProviderRequestSchemas>({
   name: "",
@@ -25,7 +28,14 @@ const { mutate, isLoading } = useMutation({
   mutation: (data: CreateAiProviderRequestSchemas) => createAiProvider(data),
   onSuccess: (data: MessageResponseSchemas) => {
     ElMessage({ message: data.detail, type: "success" });
-    dialogStore.close();
+    switch (prop.model) {
+      case "dialog":
+        dialogStore.close();
+        break;
+      case "drawer":
+        drawerStore.close();
+        break;
+    }
   },
   onError: (err: Error) => {
     ElMessage({ message: err.message, type: "error" });
@@ -48,7 +58,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 const closeDialog = () => {
-  dialogStore.close();
+  switch (prop.model) {
+    case "dialog":
+      dialogStore.close();
+      break;
+    case "drawer":
+      drawerStore.close();
+      break;
+  }
 };
 
 dialogStore.$subscribe(() => {

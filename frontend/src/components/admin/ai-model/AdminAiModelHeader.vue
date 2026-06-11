@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Plus, Search } from "@element-plus/icons-vue";
-import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
+import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 
-const dialogStore = useAiProviderDialogStore();
+const dialogStore = useAiModelDialogStore();
 </script>
 
 <template>

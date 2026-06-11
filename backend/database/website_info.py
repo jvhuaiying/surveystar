@@ -1,10 +1,10 @@
-import uuid
+from uuid import UUID, uuid4
 
 from sqlmodel import Field, SQLModel
 
 
 class WebsiteInfo(SQLModel, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     logo: str
     name: str = Field(max_length=36)
     description: str = Field(max_length=64)

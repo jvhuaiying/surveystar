@@ -6,7 +6,7 @@ import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 import { Check, Edit, Remove } from "@element-plus/icons-vue";
-import { activateAiProvider, disableAiProvider, getAiProviderList } from "@/api/ai-model";
+import { activateAiProvider, disableAiProvider, getAiProviderList } from "@/api/ai-provider";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
 
 dayjs.extend(utc);

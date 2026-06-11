@@ -1,13 +1,12 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { AiProviderDialogMode } from "@/types/ai-provider";
 
-export const useAiProviderDialogStore = defineStore("aiProviderDialog", () => {
+export const useAiModelDialogStore = defineStore("aiModelDialog", () => {
   const visible = ref(false);
-  const mode = ref<AiProviderDialogMode>("create");
+  const mode = ref<"create" | "edit">("create");
   const currentId = ref<string | null>(null);
 
-  const open = (dialogMode: AiProviderDialogMode, currentIdValue: string | null) => {
+  const open = (dialogMode: "create" | "edit", currentIdValue: string | null) => {
     mode.value = dialogMode;
     currentId.value = currentIdValue;
     visible.value = true;
