@@ -1,3 +1,4 @@
+import { useAccountStore } from "@/stores/account";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -38,6 +39,21 @@ const router = createRouter({
       ],
     },
   ],
+});
+
+router.beforeEach((to) => {
+  const accountStore = useAccountStore();
+
+  if (!accountStore.access_token && to.name !== "signIn") {
+    return { name: "signIn" };
+  }
+
+  if (accountStore.access_token && to.name === "signIn") {
+    switch (accountStore.kind) {
+      case "admin":
+        return { name: "adminWebInfo" };
+    }
+  }
 });
 
 export default router;

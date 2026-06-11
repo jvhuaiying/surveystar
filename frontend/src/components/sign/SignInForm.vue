@@ -38,7 +38,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             message: "登录成功！",
             type: "success",
           });
-          if (accountStore.accountInfo.kind === "admin") {
+          if (accountStore.kind === "admin") {
             router.push({ name: "adminWebInfo" });
           }
         })
