@@ -12,6 +12,8 @@ class AiProvider(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     name: str
     is_active: bool
-    models: list["AiModel"] = Relationship(back_populates="provider")
+    models: list["AiModel"] = Relationship(
+        back_populates="provider", cascade_delete=True
+    )
     created_at: datetime
     updated_at: datetime

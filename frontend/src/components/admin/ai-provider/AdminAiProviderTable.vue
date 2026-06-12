@@ -5,8 +5,13 @@ import timezone from "dayjs/plugin/timezone";
 import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
-import { Check, Edit, Remove } from "@element-plus/icons-vue";
-import { activateAiProvider, disableAiProvider, getAiProviderList } from "@/api/ai-provider";
+import { Check, Delete, Edit, Remove } from "@element-plus/icons-vue";
+import {
+  activateAiProvider,
+  deleteAiProvider,
+  disableAiProvider,
+  getAiProviderList,
+} from "@/api/ai-provider";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
 
 dayjs.extend(utc);
@@ -52,6 +57,17 @@ const { mutate: mutateActivate } = useMutation({
   onSettled: () => queryCache.invalidateQueries({ key: ["ai-provider-list"] }),
 });
 
+const { mutate: mutateDelete } = useMutation({
+  key: ["delete-ai-provider"],
+  mutation: (id: string) => deleteAiProvider(id),
+  onSuccess: (data) => ElMessage({ message: data.detail, type: "success" }),
+  onError: (err) => ElMessage({ message: (err as Error).message, type: "error" }),
+  onSettled: () => {
+    queryCache.invalidateQueries({ key: ["ai-provider-list"] });
+    queryCache.invalidateQueries({ key: ["ai-model-list"] });
+  },
+});
+
 const dialogStore = useAiProviderDialogStore();
 
 const handleDisable = (id: string) => mutateDisable(id);
@@ -60,6 +76,24 @@ const handleActivate = (id: string) => mutateActivate(id);
 
 const handleEdit = (id: string) => {
   dialogStore.open("edit", id);
+};
+
+const handleDelete = (id: string) => {
+  ElMessageBox.confirm(
+    "确定要删除该供应商吗？此操作将同时删除其下所有模型，且不可恢复。",
+    "警告",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning",
+    },
+  )
+    .then(() => {
+      mutateDelete(id);
+    })
+    .catch(() => {
+      ElMessage({ type: "info", message: "已取消删除" });
+    });
 };
 
 watch([width1, height1], () => {
@@ -94,7 +128,7 @@ watch([width1, height1], () => {
             {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="280">
+        <el-table-column label="操作" align="center" width="360">
           <template #default="scope">
             <el-button
               type="primary"
@@ -121,6 +155,14 @@ watch([width1, height1], () => {
               @click="handleActivate(scope.row.id)"
             >
               启用
+            </el-button>
+            <el-button
+              type="danger"
+              size="small"
+              :icon="Delete"
+              @click="handleDelete(scope.row.id)"
+            >
+              删除
             </el-button>
           </template>
         </el-table-column>

@@ -11,6 +11,7 @@ from ai_provider.schemas import (
 )
 from ai_provider.services import (
     create_ai_provider,
+    delete_ai_provider,
     get_ai_provider_by_id,
     get_ai_provider_by_name,
     get_ai_providers,
@@ -109,3 +110,15 @@ def update_ai_provider_router(
         raise HTTPException(status.HTTP_409_CONFLICT, detail="提供商名称已存在！")
     update_ai_provider(provider, data.name, data.is_active)
     return MessageResponseSchemas(detail="提供商修改成功！")
+
+
+@router.delete("/{id}", response_model=MessageResponseSchemas)
+def delete_ai_provider_router(
+    id: UUID,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
+    provider = get_ai_provider_by_id(id)
+    if provider is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="提供商不存在！")
+    delete_ai_provider(provider)
+    return MessageResponseSchemas(detail="提供商已删除！")

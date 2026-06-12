@@ -15,7 +15,7 @@ class AiModel(SQLModel, table=True):
     base_url: str
     is_active: bool
     model_type: str
-    provider_id: UUID = Field(foreign_key="aiprovider.id")
+    provider_id: UUID = Field(foreign_key="aiprovider.id", ondelete="CASCADE")
     provider: "AiProvider" = Relationship(back_populates="models")
     created_at: datetime
     updated_at: datetime

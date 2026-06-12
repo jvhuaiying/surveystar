@@ -67,3 +67,9 @@ def update_ai_provider(
         session.commit()
         session.refresh(provider)
     return provider
+
+
+def delete_ai_provider(provider: AiProvider) -> None:
+    with Session(engine) as session:
+        session.delete(provider)
+        session.commit()

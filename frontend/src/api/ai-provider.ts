@@ -65,3 +65,12 @@ export const updateAiProvider = (
       throw new Error(err.response?.data?.detail || "修改提供商失败！");
     });
 };
+
+export const deleteAiProvider = (id: string): Promise<MessageResponseSchemas> => {
+  return request
+    .delete(`/ai-provider/${id}`)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "删除提供商失败！");
+    });
+};
