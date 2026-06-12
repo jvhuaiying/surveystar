@@ -39,31 +39,25 @@ def create_account(
 
 def get_account() -> Sequence[Account]:
     with Session(engine) as session:
-        statement = select(Account).where(Account.status != AccountStatus.deleted)
+        statement = select(Account)
         return session.exec(statement).all()
 
 
 def get_account_by_email(email: EmailStr) -> Account | None:
     with Session(engine) as session:
-        statement = select(Account).where(
-            Account.email == email, Account.status != AccountStatus.deleted
-        )
+        statement = select(Account).where(Account.email == email)
         return session.exec(statement).first()
 
 
 def get_account_by_id(id: UUID) -> Account | None:
     with Session(engine) as session:
-        statement = select(Account).where(
-            Account.id == id, Account.status != AccountStatus.deleted
-        )
+        statement = select(Account).where(Account.id == id)
         return session.exec(statement).first()
 
 
 def get_accounts_by_kind(kind: AccountKind) -> Sequence[Account]:
     with Session(engine) as session:
-        statement = select(Account).where(
-            Account.kind == kind, Account.status != AccountStatus.deleted
-        )
+        statement = select(Account).where(Account.kind == kind)
         return session.exec(statement).all()
 
 
@@ -79,6 +73,12 @@ def update_account_status(account: Account, status: AccountStatus):
     account.status = status
     with Session(engine) as session:
         session.add(account)
+        session.commit()
+
+
+def delete_account(account: Account) -> None:
+    with Session(engine) as session:
+        session.delete(account)
         session.commit()
 
 

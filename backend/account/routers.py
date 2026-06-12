@@ -14,6 +14,7 @@ from account.schemas import (
 )
 from account.services import (
     create_account,
+    delete_account,
     get_account,
     get_account_by_email,
     get_account_by_id,
@@ -163,7 +164,7 @@ def delete_account_router(
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST, detail="处于激活状态的管理员账号不足！"
         )
-    update_account_status(target, AccountStatus.deleted)
+    delete_account(target)
     return MessageResponseSchemas(detail="账号删除成功！")
 
 

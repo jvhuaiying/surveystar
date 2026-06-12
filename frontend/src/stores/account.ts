@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { SigninResponseSchemas } from "@/types/account";
+import type { AccountKind, AccountStatus, SigninResponseSchemas } from "@/types/account";
 
 export const useAccountStore = defineStore(
   "account",
@@ -9,8 +9,8 @@ export const useAccountStore = defineStore(
     const id = ref("");
     const nickname = ref("");
     const email = ref("");
-    const kind = ref<"admin" | "user">("user");
-    const status = ref<"active" | "disabled" | "deleted">("active");
+    const kind = ref<AccountKind>("user");
+    const status = ref<AccountStatus>("active");
 
     const setAccountInfo = (data: SigninResponseSchemas) => {
       access_token.value = data.access_token;

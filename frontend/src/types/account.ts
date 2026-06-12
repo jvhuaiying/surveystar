@@ -1,7 +1,10 @@
+export type AccountStatus = "active" | "disabled";
+export type AccountKind = "admin" | "user";
+
 export type SigninRequestSchemas = {
   email: string;
   password: string;
-  kind: "admin" | "user";
+  kind: AccountKind;
   remember: boolean;
 };
 
@@ -10,23 +13,23 @@ export type SigninResponseSchemas = {
   id: string;
   nickname: string;
   email: string;
-  kind: "admin" | "user";
-  status: "active" | "disabled" | "deleted";
+  kind: AccountKind;
+  status: AccountStatus;
 };
 
 export type CreateAccountRequestSchemas = {
   nickname: string;
   email: string;
   password: string;
-  status: "active" | "disabled" | "deleted";
-  kind: "admin" | "user";
+  status: AccountStatus;
+  kind: AccountKind;
 };
 
 export type UpdateAccountRequestSchemas = {
   nickname: string;
   email: string;
-  status: "active" | "disabled" | "deleted";
-  kind: "admin" | "user";
+  status: AccountStatus;
+  kind: AccountKind;
 };
 
 export type MessageResponseSchemas = {
@@ -39,8 +42,8 @@ export type GetAccountResponseSchemas = {
   id: string;
   nickname: string;
   email: string;
-  status: "active" | "disabled" | "deleted";
-  kind: "admin" | "user";
+  status: AccountStatus;
+  kind: AccountKind;
   created_at: string;
   updated_at: string;
 };

@@ -9,4 +9,3 @@ class AccountKind(StrEnum):
 class AccountStatus(StrEnum):
     active = "active"
     disabled = "disabled"
-    deleted = "deleted"
