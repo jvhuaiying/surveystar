@@ -64,10 +64,6 @@ const resetForm = (formEl: FormInstance | undefined) => {
 const closeDialog = () => {
   dialogStore.close();
 };
-
-dialogStore.$subscribe(() => {
-  resetForm(formRef.value);
-});
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { getAccountById, updateAccount } from "@/api/account";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
@@ -44,9 +44,9 @@ const { mutate: fetchAccount, isLoading: isFetching } = useMutation({
   },
 });
 
-dialogStore.$subscribe((_mutation, state) => {
-  if (state.visible && state.mode === "edit" && state.currentId) {
-    fetchAccount(state.currentId);
+onMounted(() => {
+  if (dialogStore.currentId) {
+    fetchAccount(dialogStore.currentId);
   }
 });
 

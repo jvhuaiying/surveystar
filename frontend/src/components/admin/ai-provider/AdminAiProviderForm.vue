@@ -67,10 +67,6 @@ const closeDialog = () => {
       break;
   }
 };
-
-dialogStore.$subscribe(() => {
-  resetForm(formRef.value);
-});
 </script>
 
 <template>

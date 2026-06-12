@@ -4,14 +4,10 @@ import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
-import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
+import { useMutation, useQueryCache } from "@pinia/colada";
 import { Check, Delete, Edit, Remove } from "@element-plus/icons-vue";
-import {
-  activateAiProvider,
-  deleteAiProvider,
-  disableAiProvider,
-  getAiProviderList,
-} from "@/api/ai-provider";
+import { activateAiProvider, deleteAiProvider, disableAiProvider } from "@/api/ai-provider";
+import { getAiProviderListUtils } from "@/utils/admin/ai-provider";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
 
 dayjs.extend(utc);
@@ -25,10 +21,7 @@ const {
   data: providerList,
   error,
   isLoading,
-} = useQuery({
-  key: ["ai-provider-list"],
-  query: getAiProviderList,
-});
+} = getAiProviderListUtils();
 
 watch(error, (err) => {
   if (err) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { getAiProviderById, updateAiProvider } from "@/api/ai-provider";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
@@ -33,9 +33,9 @@ const { mutate: fetchProvider, isLoading: isFetching } = useMutation({
   },
 });
 
-dialogStore.$subscribe((_mutation, state) => {
-  if (state.visible && state.mode === "edit" && state.currentId) {
-    fetchProvider(state.currentId);
+onMounted(() => {
+  if (dialogStore.currentId) {
+    fetchProvider(dialogStore.currentId);
   }
 });
 

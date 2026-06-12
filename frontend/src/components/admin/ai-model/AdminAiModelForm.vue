@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
 import { createAiModel } from "@/api/ai-model";
-import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
+import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
 import { Check, Close, Plus, RefreshRight } from "@element-plus/icons-vue";
 import type { CreateAiModelRequestSchemas, MessageResponseSchemas } from "@/types/ai-model";
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 import { useAiModelDrawerStore } from "@/stores/ai-model-drawer";
-import { getAiProviderList } from "@/api/ai-provider";
+import { getAiProviderListUtils } from "@/utils/admin/ai-provider";
 
 const queryCache = useQueryCache();
 const dialogStore = useAiModelDialogStore();
@@ -35,10 +35,7 @@ const {
   data: providerList,
   error: err0,
   isLoading: load0,
-} = useQuery({
-  key: ["ai-provider-list"],
-  query: getAiProviderList,
-});
+} = getAiProviderListUtils();
 
 watch(err0, (err) => {
   if (err) {
@@ -60,10 +57,6 @@ const { mutate, isLoading } = useMutation({
     ElMessage({ message: err.message, type: "error" });
   },
   onSettled: () => queryCache.invalidateQueries({ key: ["ai-model-list"] }),
-});
-
-dialogStore.$subscribe(() => {
-  resetForm(formRef.value);
 });
 
 const submitForm = async (formEl: FormInstance | undefined) => {

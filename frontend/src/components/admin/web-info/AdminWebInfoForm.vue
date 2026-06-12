@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { reactive, ref, watchEffect } from "vue";
+import { reactive, ref, watch } from "vue";
+import { updateWebsiteInfo } from "@/api/website-info";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
-import type {
-  UpdateWebsiteInfoRequestSchemas,
-  WebsiteInfoResponseSchemas,
-} from "@/types/website-info";
 import type { MessageResponseSchemas } from "@/types/account";
-import { updateWebsiteInfo } from "@/api/website-info";
 import { Check, RefreshRight } from "@element-plus/icons-vue";
+import { getWebsiteInfoUtils } from "@/utils/admin/website-info";
+import type { UpdateWebsiteInfoRequestSchemas } from "@/types/website-info";
 
 const queryCache = useQueryCache();
 const formRef = ref<FormInstance>();
-const entry = queryCache.get<WebsiteInfoResponseSchemas>(["websiteInfo"]);
+const { data: websiteInfo } = getWebsiteInfoUtils();
 
 const formModel = reactive<UpdateWebsiteInfoRequestSchemas>({
   name: "",
@@ -25,11 +23,14 @@ const rules: FormRules = {
   description: [{ required: true, message: "请输入网站描述", trigger: "blur" }],
 };
 
-watchEffect(() => {
-  const data = entry?.state.value.data;
-  if (!data) return;
-  Object.assign(formModel, { name: data.name, description: data.description, icp: data.icp });
-});
+watch(
+  websiteInfo,
+  (data) => {
+    if (!data) return;
+    Object.assign(formModel, { name: data.name, description: data.description, icp: data.icp });
+  },
+  { immediate: true },
+);
 
 const { mutate, isLoading } = useMutation({
   key: ["update-website-info"],

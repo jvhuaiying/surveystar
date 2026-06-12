@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import { RouterView } from "vue-router";
-import { useQuery } from "@pinia/colada";
 import { ElConfigProvider } from "element-plus";
-import { getWebsiteInfo } from "@/api/website-info";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import { getWebsiteInfoUtils } from "@/utils/admin/website-info";
 
-const { data, isLoading, error } = useQuery({
-  key: ["websiteInfo"],
-  query: getWebsiteInfo,
-});
+const { data, isLoading, error } = getWebsiteInfoUtils();
 
 watch(data, (data) => {
   if (!data) return;
@@ -34,6 +30,6 @@ watch(error, (err) => {
 
 <template>
   <el-config-provider :locale="zhCn">
-    <RouterView v-loading="isLoading" />
+    <RouterView v-loading.fullscreen.lock="isLoading" />
   </el-config-provider>
 </template>

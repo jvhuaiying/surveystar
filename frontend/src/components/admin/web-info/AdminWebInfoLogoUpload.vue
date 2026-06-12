@@ -3,15 +3,15 @@ import { computed, useTemplateRef } from "vue";
 import { updateWebsiteLogo } from "@/api/website-info";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { MessageResponseSchemas } from "@/types/account";
-import type { WebsiteInfoResponseSchemas } from "@/types/website-info";
+import { getWebsiteInfoUtils } from "@/utils/admin/website-info";
 
 const queryCache = useQueryCache();
 const ref0 = useTemplateRef("ref0");
+const { data } = getWebsiteInfoUtils();
 const props = defineProps<{ height: number }>();
-const entry = queryCache.get<WebsiteInfoResponseSchemas>(["websiteInfo"]);
 
 const imageUrl = computed(() => {
-  return entry?.state.value.data ? `/api/${entry?.state.value.data.logo}` : "";
+  return data.value?.logo ? `/api/${data.value.logo}` : "";
 });
 
 const { mutate, isLoading } = useMutation({
