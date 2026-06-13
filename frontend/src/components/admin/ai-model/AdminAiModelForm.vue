@@ -31,11 +31,7 @@ const rules: FormRules = {
   provider_id: [{ required: true, message: "请选择供应商", trigger: "change" }],
 };
 
-const {
-  data: providerList,
-  error: err0,
-  isLoading: load0,
-} = getAiProviderListUtils();
+const { data: providerList, error: err0, isLoading: load0 } = getAiProviderListUtils();
 
 watch(err0, (err) => {
   if (err) {

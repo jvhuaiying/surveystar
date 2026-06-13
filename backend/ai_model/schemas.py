@@ -3,6 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
+from enums.ai_model import AiModelTestStatus
+
 
 class GetAiModelResponseSchemas(BaseModel):
     id: str
@@ -11,6 +13,7 @@ class GetAiModelResponseSchemas(BaseModel):
     base_url: str
     is_active: bool
     model_type: str
+    test_status: AiModelTestStatus
     provider_id: str
     created_at: datetime
     updated_at: datetime

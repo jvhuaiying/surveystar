@@ -17,11 +17,7 @@ const el = useTemplateRef("el");
 const { height: height0 } = useElementSize(el);
 const { width: width1, height: height1 } = useWindowSize();
 
-const {
-  data: providerList,
-  error,
-  isLoading,
-} = getAiProviderListUtils();
+const { data: providerList, error, isLoading } = getAiProviderListUtils();
 
 watch(error, (err) => {
   if (err) {
@@ -72,15 +68,11 @@ const handleEdit = (id: string) => {
 };
 
 const handleDelete = (id: string) => {
-  ElMessageBox.confirm(
-    "确定要删除该供应商吗？此操作将同时删除其下所有模型，且不可恢复。",
-    "警告",
-    {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning",
-    },
-  )
+  ElMessageBox.confirm("确定要删除该供应商吗？此操作将同时删除其下所有模型，且不可恢复。", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
     .then(() => {
       mutateDelete(id);
     })
@@ -123,19 +115,14 @@ watch([width1, height1], () => {
         </el-table-column>
         <el-table-column label="操作" align="center" width="360">
           <template #default="scope">
-            <el-button
-              type="primary"
-              size="small"
-              :icon="Edit"
-              @click="handleEdit(scope.row.id)"
-            >
+            <el-button type="primary" :icon="Edit" :link="true" @click="handleEdit(scope.row.id)">
               编辑
             </el-button>
             <el-button
               v-if="scope.row.is_active"
               type="warning"
-              size="small"
               :icon="Remove"
+              :link="true"
               @click="handleDisable(scope.row.id)"
             >
               禁用
@@ -143,16 +130,16 @@ watch([width1, height1], () => {
             <el-button
               v-else
               type="primary"
-              size="small"
               :icon="Check"
+              :link="true"
               @click="handleActivate(scope.row.id)"
             >
               启用
             </el-button>
             <el-button
               type="danger"
-              size="small"
               :icon="Delete"
+              :link="true"
               @click="handleDelete(scope.row.id)"
             >
               删除

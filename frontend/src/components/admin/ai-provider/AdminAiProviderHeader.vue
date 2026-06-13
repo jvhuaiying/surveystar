@@ -11,6 +11,8 @@ const dialogStore = useAiProviderDialogStore();
   >
     <el-input />
     <el-button type="primary" :icon="Search">查找</el-button>
-    <el-button type="success" class="ml-0!" :icon="Plus" @click="dialogStore.open('create', null)"> 新增 </el-button>
+    <el-button type="success" class="ml-0!" :icon="Plus" @click="dialogStore.open('create', null)">
+      新增
+    </el-button>
   </div>
 </template>

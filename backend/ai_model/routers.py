@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -7,7 +8,13 @@ from ai_model.schemas import (
     GetAiModelResponseSchemas,
     MessageResponseSchemas,
 )
-from ai_model.services import create_ai_model, get_ai_model_by_name, get_ai_models
+from ai_model.services import (
+    create_ai_model,
+    get_ai_model_by_id,
+    get_ai_model_by_name,
+    get_ai_models,
+    test_ai_model,
+)
 from auth import get_current_admin
 from database import Account
 
@@ -45,9 +52,24 @@ def get_ai_models_router(
             base_url=i.base_url,
             is_active=i.is_active,
             model_type=i.model_type,
+            test_status=i.test_status,
             provider_id=str(i.provider_id),
             created_at=i.created_at,
             updated_at=i.updated_at,
         )
         for i in models
     ]
+
+
+@router.get("/{model_id}/test", response_model=MessageResponseSchemas)
+def test_ai_model_router(
+    model_id: UUID,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
+    model = get_ai_model_by_id(model_id)
+    if model is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="模型不存在！")
+    result = test_ai_model(model)
+    if not result["status"]:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=result["message"])
+    return MessageResponseSchemas(detail="模型测试成功！")

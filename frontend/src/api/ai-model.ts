@@ -25,3 +25,12 @@ export const getAiModelList = (): Promise<GetAiModelResponseSchemas[]> => {
       throw new Error(err.response?.data?.detail || "获取模型列表失败！");
     });
 };
+
+export const testAiModel = (id: string): Promise<MessageResponseSchemas> => {
+  return request
+    .get(`/ai-model/${id}/test`)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "测试模型连接失败！");
+    });
+};

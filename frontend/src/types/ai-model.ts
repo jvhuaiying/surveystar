@@ -7,6 +7,8 @@ export type CreateAiModelRequestSchemas = {
   provider_id: string;
 };
 
+export type AiModelTestStatus = "untested" | "success" | "failed";
+
 export type GetAiModelResponseSchemas = {
   id: string;
   name: string;
@@ -14,6 +16,7 @@ export type GetAiModelResponseSchemas = {
   base_url: string;
   is_active: boolean;
   model_type: string;
+  test_status: AiModelTestStatus;
   provider_id: string;
   created_at: string;
   updated_at: string;

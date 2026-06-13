@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useQuery } from "@pinia/colada";
+import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 import timezone from "dayjs/plugin/timezone";
-import { getAiModelList } from "@/api/ai-model";
+import { getAiModelList, testAiModel } from "@/api/ai-model";
 import { ref, useTemplateRef, watch } from "vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
+import { Link } from "@element-plus/icons-vue";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -15,9 +16,25 @@ const el = useTemplateRef("el");
 const { height: height0 } = useElementSize(el);
 const { width: width1, height: height1 } = useWindowSize();
 
+const queryCache = useQueryCache();
+
 const { data, error, isLoading } = useQuery({
   key: ["ai-model-list"],
   query: getAiModelList,
+});
+
+const testMutation = useMutation({
+  key: ["ai-model-test"],
+  mutation: (id: string) => testAiModel(id),
+  onSuccess: (data) => {
+    ElMessage.success(data.detail);
+  },
+  onError: (err) => {
+    ElMessage.error(err.message);
+  },
+  onSettled: () => {
+    queryCache.invalidateQueries({ key: ["ai-model-list"] });
+  },
 });
 
 watch(error, (err) => {
@@ -46,14 +63,35 @@ watch([width1, height1], () => {
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="api_key" label="API密钥" align="center" />
         <el-table-column prop="base_url" label="基础URL" align="center" />
-        <el-table-column prop="is_active" label="状态" align="center">
+        <el-table-column prop="is_active" label="启用状态" align="center" width="80">
           <template #default="scope">
             <el-tag :type="scope.row.is_active ? 'success' : 'danger'">
               {{ scope.row.is_active ? "启用" : "禁用" }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="model_type" label="模型类型" align="center" />
+        <el-table-column prop="model_type" label="模型类型" align="center" width="80" />
+        <el-table-column prop="test_status" label="测试状态" align="center" width="80">
+          <template #default="scope">
+            <el-tag
+              :type="
+                scope.row.test_status === 'untested'
+                  ? 'info'
+                  : scope.row.test_status === 'success'
+                    ? 'success'
+                    : 'danger'
+              "
+            >
+              {{
+                scope.row.test_status === "untested"
+                  ? "待测"
+                  : scope.row.test_status === "success"
+                    ? "成功"
+                    : "失败"
+              }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="created_at" label="创建时间" align="center" width="180">
           <template #default="scope">
             {{ dayjs.utc(scope.row.created_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
@@ -62,6 +100,19 @@ watch([width1, height1], () => {
         <el-table-column prop="updated_at" label="修改时间" align="center" width="180">
           <template #default="scope">
             {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="120">
+          <template #default="scope">
+            <el-button
+              type="primary"
+              :icon="Link"
+              :link="true"
+              :loading="testMutation.asyncStatus.value === 'loading'"
+              @click="testMutation.mutate(scope.row.id)"
+            >
+              测试
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
