@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -15,8 +14,6 @@ class GetAiModelResponseSchemas(BaseModel):
     model_type: str
     test_status: AiModelTestStatus
     provider_id: str
-    created_at: datetime
-    updated_at: datetime
 
 
 class CreateAiModelRequestSchemas(BaseModel):

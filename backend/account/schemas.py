@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import BaseModel, EmailStr, Field
 
 from enums.account import AccountKind, AccountStatus
@@ -46,5 +44,3 @@ class GetAccountResponseSchemas(BaseModel):
     email: EmailStr
     status: AccountStatus
     kind: AccountKind
-    created_at: datetime
-    updated_at: datetime

@@ -1,6 +1,5 @@
-from uuid import UUID
-from datetime import datetime, timezone
 from typing import Sequence
+from uuid import UUID
 
 from sqlmodel import Session, select
 
@@ -12,12 +11,9 @@ def create_ai_provider(
     name: str,
     is_active: bool,
 ) -> AiProvider:
-    now = datetime.now(timezone.utc)
     provider = AiProvider(
         name=name,
         is_active=is_active,
-        created_at=now,
-        updated_at=now,
     )
     with Session(engine) as session:
         session.add(provider)
@@ -46,7 +42,6 @@ def get_ai_provider_by_id(id: UUID) -> AiProvider | None:
 
 def update_ai_provider_status(provider: AiProvider, is_active: bool) -> AiProvider:
     provider.is_active = is_active
-    provider.updated_at = datetime.now(timezone.utc)
     with Session(engine) as session:
         session.add(provider)
         session.commit()
@@ -61,7 +56,6 @@ def update_ai_provider(
 ) -> AiProvider:
     provider.name = name
     provider.is_active = is_active
-    provider.updated_at = datetime.now(timezone.utc)
     with Session(engine) as session:
         session.add(provider)
         session.commit()

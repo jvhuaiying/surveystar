@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from typing import Sequence
 from uuid import UUID
 
@@ -31,7 +30,6 @@ def create_ai_model(
     model_type: str,
     provider_id: UUID,
 ):
-    now = datetime.now(timezone.utc)
     ai_model = AiModel(
         name=name,
         api_key=api_key,
@@ -40,8 +38,6 @@ def create_ai_model(
         model_type=model_type,
         test_status=AiModelTestStatus.untested,
         provider_id=provider_id,
-        created_at=now,
-        updated_at=now,
     )
     with Session(engine) as session:
         session.add(ai_model)
@@ -76,7 +72,6 @@ def update_ai_model(
     ai_model.is_active = is_active
     ai_model.model_type = model_type
     ai_model.provider_id = provider_id
-    ai_model.updated_at = datetime.now(timezone.utc)
     with Session(engine) as session:
         session.add(ai_model)
         session.commit()
@@ -145,7 +140,6 @@ def test_ai_model(ai_model: AiModel) -> dict:
         ai_model.test_status = AiModelTestStatus.failed
         return {"status": False, "message": f"未知错误：{e}"}
     finally:
-        ai_model.updated_at = datetime.now(timezone.utc)
         with Session(engine) as session:
             session.add(ai_model)
             session.commit()

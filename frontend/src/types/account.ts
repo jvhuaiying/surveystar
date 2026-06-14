@@ -44,6 +44,4 @@ export type GetAccountResponseSchemas = {
   email: string;
   status: AccountStatus;
   kind: AccountKind;
-  created_at: string;
-  updated_at: string;
 };

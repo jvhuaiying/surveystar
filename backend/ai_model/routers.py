@@ -57,8 +57,6 @@ def get_ai_models_router(
             model_type=i.model_type,
             test_status=i.test_status,
             provider_id=str(i.provider_id),
-            created_at=i.created_at,
-            updated_at=i.updated_at,
         )
         for i in models
     ]
@@ -119,8 +117,6 @@ def get_ai_model_by_id_router(
         model_type=model.model_type,
         test_status=model.test_status,
         provider_id=str(model.provider_id),
-        created_at=model.created_at,
-        updated_at=model.updated_at,
     )
 
 

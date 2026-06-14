@@ -48,8 +48,6 @@ def get_ai_providers_router(
             id=str(i.id),
             name=i.name,
             is_active=i.is_active,
-            created_at=i.created_at,
-            updated_at=i.updated_at,
         )
         for i in providers
     ]
@@ -91,8 +89,6 @@ def get_ai_provider_by_id_router(
         id=str(provider.id),
         name=provider.name,
         is_active=provider.is_active,
-        created_at=provider.created_at,
-        updated_at=provider.updated_at,
     )
 
 

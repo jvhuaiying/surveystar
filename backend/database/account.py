@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import UUID, uuid4
 
 from pydantic import EmailStr
@@ -14,5 +13,3 @@ class Account(SQLModel, table=True):
     password: str = Field(max_length=128)
     status: AccountStatus
     kind: AccountKind
-    created_at: datetime
-    updated_at: datetime

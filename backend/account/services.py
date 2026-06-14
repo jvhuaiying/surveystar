@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from typing import Sequence
 from uuid import UUID
 
@@ -20,15 +19,12 @@ def create_account(
     status: AccountStatus,
     kind: AccountKind,
 ) -> Account:
-    now = datetime.now(timezone.utc)
     account = Account(
         nickname=nickname,
         email=email,
         password=password,
         status=status,
         kind=kind,
-        created_at=now,
-        updated_at=now,
     )
     with Session(engine) as session:
         session.add(account)
@@ -93,7 +89,6 @@ def update_account(
     account.email = email
     account.status = status
     account.kind = kind
-    account.updated_at = datetime.now(timezone.utc)
     with Session(engine) as session:
         session.add(account)
         session.commit()

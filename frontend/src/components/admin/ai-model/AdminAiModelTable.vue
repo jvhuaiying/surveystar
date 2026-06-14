@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import { ref, useTemplateRef, watch } from "vue";
 import { Delete, Edit, Link } from "@element-plus/icons-vue";
+import { deleteAiModel, getAiModelList, testAiModel } from "@/api/ai-model";
 import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
-import { deleteAiModel, getAiModelList, testAiModel } from "@/api/ai-model";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 const showTable = ref(true);
 const operating_id = ref("");
@@ -127,16 +121,6 @@ watch([width1, height1], () => {
                     : "失败"
               }}
             </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="created_at" label="创建时间" align="center" width="180">
-          <template #default="scope">
-            {{ dayjs.utc(scope.row.created_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="updated_at" label="修改时间" align="center" width="180">
-          <template #default="scope">
-            {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="280">

@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
@@ -15,5 +14,3 @@ class AiProvider(SQLModel, table=True):
     models: list["AiModel"] = Relationship(
         back_populates="provider", cascade_delete=True
     )
-    created_at: datetime
-    updated_at: datetime

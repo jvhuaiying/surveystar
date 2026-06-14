@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from typing import Annotated, Sequence
 from uuid import UUID
 
@@ -82,8 +81,6 @@ def get_account_router(
             email=account0.email,
             status=account0.status,
             kind=account0.kind,
-            created_at=account0.created_at,
-            updated_at=account0.updated_at,
         )
         for account0 in accounts
     ]
@@ -103,8 +100,6 @@ def get_account_by_id_router(
         email=target.email,
         status=target.status,
         kind=target.kind,
-        created_at=target.created_at,
-        updated_at=target.updated_at,
     )
 
 

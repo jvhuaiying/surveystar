@@ -27,8 +27,6 @@ export type GetAiModelResponseSchemas = {
   model_type: string;
   test_status: AiModelTestStatus;
   provider_id: string;
-  created_at: string;
-  updated_at: string;
 };
 
 export type AiModelDialogMode = "create" | "edit";
