@@ -18,6 +18,7 @@ declare module 'vue' {
     AdminAccountTable: typeof import('./src/components/admin/account/AdminAccountTable.vue')['default']
     AdminAiModelDialog: typeof import('./src/components/admin/ai-model/AdminAiModelDialog.vue')['default']
     AdminAiModelDrawer: typeof import('./src/components/admin/ai-model/AdminAiModelDrawer.vue')['default']
+    AdminAiModelEditForm: typeof import('./src/components/admin/ai-model/AdminAiModelEditForm.vue')['default']
     AdminAiModelForm: typeof import('./src/components/admin/ai-model/AdminAiModelForm.vue')['default']
     AdminAiModelHeader: typeof import('./src/components/admin/ai-model/AdminAiModelHeader.vue')['default']
     AdminAiModelTable: typeof import('./src/components/admin/ai-model/AdminAiModelTable.vue')['default']

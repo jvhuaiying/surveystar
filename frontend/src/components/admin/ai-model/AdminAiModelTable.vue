@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 import timezone from "dayjs/plugin/timezone";
-import { getAiModelList, testAiModel } from "@/api/ai-model";
 import { ref, useTemplateRef, watch } from "vue";
+import { Edit, Link } from "@element-plus/icons-vue";
+import { getAiModelList, testAiModel } from "@/api/ai-model";
 import { useElementSize, useWindowSize } from "@vueuse/core";
-import { Link } from "@element-plus/icons-vue";
+import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
+import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const test_id = ref("");
 const showTable = ref(true);
 const el = useTemplateRef("el");
 const { height: height0 } = useElementSize(el);
 const { width: width1, height: height1 } = useWindowSize();
 
 const queryCache = useQueryCache();
+const dialogStore = useAiModelDialogStore();
 
 const { data, error, isLoading } = useQuery({
   key: ["ai-model-list"],
@@ -36,6 +39,11 @@ const testMutation = useMutation({
     queryCache.invalidateQueries({ key: ["ai-model-list"] });
   },
 });
+
+const handleTest = (id: string) => {
+  test_id.value = id;
+  testMutation.mutate(id);
+};
 
 watch(error, (err) => {
   if (err) {
@@ -61,7 +69,11 @@ watch([width1, height1], () => {
     <div ref="el" v-loading="isLoading" class="w-full flex-1">
       <el-table :height="height0" v-show="showTable" :data="data" stripe>
         <el-table-column prop="name" label="名称" align="center" />
-        <el-table-column prop="api_key" label="API密钥" align="center" />
+        <el-table-column prop="api_key" label="API密钥" align="center" width="180">
+          <template #default="scope">
+            {{ scope.row.api_key.slice(0, 7) + "****" + scope.row.api_key.slice(-4) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="base_url" label="基础URL" align="center" />
         <el-table-column prop="is_active" label="启用状态" align="center" width="80">
           <template #default="scope">
@@ -102,14 +114,23 @@ watch([width1, height1], () => {
             {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="120">
+        <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
+            <el-button
+              type="primary"
+              :icon="Edit"
+              :link="true"
+              @click="dialogStore.open('edit', scope.row.id)"
+            >
+              编辑
+            </el-button>
             <el-button
               type="primary"
               :icon="Link"
               :link="true"
-              :loading="testMutation.asyncStatus.value === 'loading'"
-              @click="testMutation.mutate(scope.row.id)"
+              @click="handleTest(scope.row.id)"
+              :loading="testMutation.asyncStatus.value === 'loading' && scope.row.id === test_id"
+              :disabled="testMutation.asyncStatus.value === 'loading' && scope.row.id !== test_id"
             >
               测试
             </el-button>

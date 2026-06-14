@@ -7,6 +7,15 @@ export type CreateAiModelRequestSchemas = {
   provider_id: string;
 };
 
+export type UpdateAiModelRequestSchemas = {
+  name: string;
+  api_key: string;
+  base_url: string;
+  is_active: boolean;
+  model_type: string;
+  provider_id: string;
+};
+
 export type AiModelTestStatus = "untested" | "success" | "failed";
 
 export type GetAiModelResponseSchemas = {

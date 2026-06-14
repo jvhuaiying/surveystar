@@ -28,5 +28,14 @@ class CreateAiModelRequestSchemas(BaseModel):
     provider_id: UUID
 
 
+class UpdateAiModelRequestSchemas(BaseModel):
+    name: str
+    api_key: str
+    base_url: str
+    is_active: bool
+    model_type: str
+    provider_id: UUID
+
+
 class MessageResponseSchemas(BaseModel):
     detail: str

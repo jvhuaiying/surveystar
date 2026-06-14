@@ -4,6 +4,7 @@ import type {
   CreateAiModelRequestSchemas,
   GetAiModelResponseSchemas,
   MessageResponseSchemas,
+  UpdateAiModelRequestSchemas,
 } from "@/types/ai-model";
 
 export const createAiModel = (
@@ -32,5 +33,26 @@ export const testAiModel = (id: string): Promise<MessageResponseSchemas> => {
     .then((res) => res.data)
     .catch((err: AxiosError<{ detail: string }>) => {
       throw new Error(err.response?.data?.detail || "测试模型连接失败！");
+    });
+};
+
+export const getAiModelById = (id: string): Promise<GetAiModelResponseSchemas> => {
+  return request
+    .get(`/ai-model/${id}`)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "获取模型信息失败！");
+    });
+};
+
+export const updateAiModel = (
+  id: string,
+  data: UpdateAiModelRequestSchemas,
+): Promise<MessageResponseSchemas> => {
+  return request
+    .patch(`/ai-model/${id}`, data)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "修改模型失败！");
     });
 };

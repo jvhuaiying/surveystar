@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
-import { createAiModel } from "@/api/ai-model";
+import { reactive, ref, onMounted, watch } from "vue";
+import { getAiModelById, updateAiModel } from "@/api/ai-model";
 import { useMutation, useQueryCache } from "@pinia/colada";
 import type { FormInstance, FormRules } from "element-plus";
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 import { useAiModelDrawerStore } from "@/stores/ai-model-drawer";
 import { getAiProviderListUtils } from "@/utils/admin/ai-provider";
 import { Check, Close, Plus, RefreshRight } from "@element-plus/icons-vue";
-import type { CreateAiModelRequestSchemas, MessageResponseSchemas } from "@/types/ai-model";
+import type { MessageResponseSchemas, UpdateAiModelRequestSchemas } from "@/types/ai-model";
 
-const queryCache = useQueryCache();
 const formRef = ref<FormInstance>();
+const queryCache = useQueryCache();
 const dialogStore = useAiModelDialogStore();
 const drawerStore = useAiModelDrawerStore();
 
-const formModel = reactive<CreateAiModelRequestSchemas>({
+const formModel = reactive<UpdateAiModelRequestSchemas>({
   name: "",
   api_key: "",
   base_url: "",
@@ -42,9 +42,33 @@ watch(err0, (err) => {
   }
 });
 
-const { mutate, isLoading } = useMutation({
-  key: ["create-ai-model"],
-  mutation: (data: CreateAiModelRequestSchemas) => createAiModel(data),
+const { mutate: fetchModel, isLoading: isFetching } = useMutation({
+  key: (id: string) => ["ai-model", id],
+  mutation: (id: string) => getAiModelById(id),
+  onSuccess: (model) => {
+    formModel.name = model.name;
+    formModel.api_key = model.api_key;
+    formModel.base_url = model.base_url;
+    formModel.is_active = model.is_active;
+    formModel.model_type = model.model_type;
+    formModel.provider_id = model.provider_id;
+  },
+  onError: (err: Error) => {
+    ElMessage({ message: err.message, type: "error" });
+    dialogStore.close();
+  },
+});
+
+onMounted(() => {
+  if (dialogStore.currentId) {
+    fetchModel(dialogStore.currentId);
+  }
+});
+
+const { mutate: submitModel, isLoading: isSubmitting } = useMutation({
+  key: ["update-ai-model"],
+  mutation: (vars: { id: string; data: UpdateAiModelRequestSchemas }) =>
+    updateAiModel(vars.id, vars.data),
   onSuccess: (data: MessageResponseSchemas) => {
     ElMessage({ message: data.detail, type: "success" });
     dialogStore.close();
@@ -59,7 +83,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid) => {
     if (valid) {
-      mutate(formModel);
+      submitModel({ id: dialogStore.currentId!, data: formModel });
     }
   });
 };
@@ -67,6 +91,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
+  fetchModel(dialogStore.currentId!);
 };
 
 const closeDialog = () => {
@@ -75,7 +100,7 @@ const closeDialog = () => {
 </script>
 
 <template>
-  <el-form ref="formRef" :model="formModel" :rules="rules" class="w-full" v-loading="load0">
+  <el-form ref="formRef" :model="formModel" :rules="rules" class="w-full" v-loading="isFetching || load0">
     <el-form-item prop="provider_id">
       <div class="w-full flex flex-row justify-center items-center gap-x-2">
         <el-select v-model="formModel.provider_id" placeholder="请选择供应商" class="flex-1">
@@ -114,7 +139,7 @@ const closeDialog = () => {
     </el-form-item>
 
     <div class="grid grid-cols-3 gap-x-4">
-      <el-button type="primary" :icon="Check" :loading="isLoading" @click="submitForm(formRef)">
+      <el-button type="primary" :icon="Check" :loading="isSubmitting" @click="submitForm(formRef)">
         提交
       </el-button>
       <el-button class="ml-0!" type="danger" :icon="RefreshRight" @click="resetForm(formRef)">

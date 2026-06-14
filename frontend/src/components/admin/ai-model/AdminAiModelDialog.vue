@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
+import AdminAiModelEditForm from "@/components/admin/ai-model/AdminAiModelEditForm.vue";
 import AdminAiModelForm from "@/components/admin/ai-model/AdminAiModelForm.vue";
 
 const dialogStore = useAiModelDialogStore();
@@ -24,5 +25,6 @@ const handleClose = () => {
       {{ dialogStore.mode === "create" ? "新增大模型" : "编辑大模型" }}
     </h1>
     <AdminAiModelForm v-show="dialogStore.mode === 'create'" />
+    <AdminAiModelEditForm v-show="dialogStore.mode === 'edit'" />
   </el-dialog>
 </template>

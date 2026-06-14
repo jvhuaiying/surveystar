@@ -3,8 +3,8 @@ from typing import Sequence
 from uuid import UUID
 
 from openai import (
-    APIError,
     APIConnectionError,
+    APIError,
     APIResponseValidationError,
     APITimeoutError,
     AuthenticationError,
@@ -61,6 +61,29 @@ def get_ai_model_by_id(model_id: UUID) -> AiModel | None:
         return session.exec(statement).first()
 
 
+def update_ai_model(
+    ai_model: AiModel,
+    name: str,
+    api_key: str,
+    base_url: str,
+    is_active: bool,
+    model_type: str,
+    provider_id: UUID,
+) -> AiModel:
+    ai_model.name = name
+    ai_model.api_key = api_key
+    ai_model.base_url = base_url
+    ai_model.is_active = is_active
+    ai_model.model_type = model_type
+    ai_model.provider_id = provider_id
+    ai_model.updated_at = datetime.now(timezone.utc)
+    with Session(engine) as session:
+        session.add(ai_model)
+        session.commit()
+        session.refresh(ai_model)
+    return ai_model
+
+
 def get_ai_models() -> Sequence[AiModel]:
     with Session(engine) as session:
         statement = select(AiModel)
@@ -76,12 +99,15 @@ def test_ai_model(ai_model: AiModel) -> dict:
     except AuthenticationError as e:
         ai_model.test_status = AiModelTestStatus.failed
         return {"status": False, "message": f"身份认证失败，请检查 API Key：{e}"}
-    except APIConnectionError as e:
-        ai_model.test_status = AiModelTestStatus.failed
-        return {"status": False, "message": f"无法连接到 API 地址 {ai_model.base_url}：{e}"}
     except APITimeoutError as e:
         ai_model.test_status = AiModelTestStatus.failed
         return {"status": False, "message": f"连接超时：{e}"}
+    except APIConnectionError as e:
+        ai_model.test_status = AiModelTestStatus.failed
+        return {
+            "status": False,
+            "message": f"无法连接到 API 地址 {ai_model.base_url}：{e}",
+        }
     except RateLimitError as e:
         ai_model.test_status = AiModelTestStatus.failed
         return {"status": False, "message": f"请求频率超限：{e}"}

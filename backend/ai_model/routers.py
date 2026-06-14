@@ -7,6 +7,7 @@ from ai_model.schemas import (
     CreateAiModelRequestSchemas,
     GetAiModelResponseSchemas,
     MessageResponseSchemas,
+    UpdateAiModelRequestSchemas,
 )
 from ai_model.services import (
     create_ai_model,
@@ -14,6 +15,7 @@ from ai_model.services import (
     get_ai_model_by_name,
     get_ai_models,
     test_ai_model,
+    update_ai_model,
 )
 from auth import get_current_admin
 from database import Account
@@ -73,3 +75,49 @@ def test_ai_model_router(
     if not result["status"]:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=result["message"])
     return MessageResponseSchemas(detail="模型测试成功！")
+
+
+@router.patch("/{model_id}", response_model=MessageResponseSchemas)
+def update_ai_model_router(
+    model_id: UUID,
+    data: UpdateAiModelRequestSchemas,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
+    model = get_ai_model_by_id(model_id)
+    if model is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="模型不存在！")
+    existing = get_ai_model_by_name(data.name)
+    if existing is not None and existing.id != model_id:
+        raise HTTPException(status.HTTP_409_CONFLICT, detail="模型名称已存在！")
+    update_ai_model(
+        model,
+        name=data.name,
+        api_key=data.api_key,
+        base_url=data.base_url,
+        is_active=data.is_active,
+        model_type=data.model_type,
+        provider_id=data.provider_id,
+    )
+    return MessageResponseSchemas(detail="模型修改成功！")
+
+
+@router.get("/{model_id}", response_model=GetAiModelResponseSchemas)
+def get_ai_model_by_id_router(
+    model_id: UUID,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> GetAiModelResponseSchemas:
+    model = get_ai_model_by_id(model_id)
+    if model is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="模型不存在！")
+    return GetAiModelResponseSchemas(
+        id=str(model.id),
+        name=model.name,
+        api_key=model.api_key,
+        base_url=model.base_url,
+        is_active=model.is_active,
+        model_type=model.model_type,
+        test_status=model.test_status,
+        provider_id=str(model.provider_id),
+        created_at=model.created_at,
+        updated_at=model.updated_at,
+    )
