@@ -56,3 +56,12 @@ export const updateAiModel = (
       throw new Error(err.response?.data?.detail || "修改模型失败！");
     });
 };
+
+export const deleteAiModel = (id: string): Promise<MessageResponseSchemas> => {
+  return request
+    .delete(`/ai-model/${id}`)
+    .then((res) => res.data)
+    .catch((err: AxiosError<{ detail: string }>) => {
+      throw new Error(err.response?.data?.detail || "删除模型失败！");
+    });
+};

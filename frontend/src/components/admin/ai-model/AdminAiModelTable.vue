@@ -3,17 +3,17 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { ref, useTemplateRef, watch } from "vue";
-import { Edit, Link } from "@element-plus/icons-vue";
-import { getAiModelList, testAiModel } from "@/api/ai-model";
+import { Delete, Edit, Link } from "@element-plus/icons-vue";
 import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
+import { deleteAiModel, getAiModelList, testAiModel } from "@/api/ai-model";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const test_id = ref("");
 const showTable = ref(true);
+const operating_id = ref("");
 const el = useTemplateRef("el");
 const { height: height0 } = useElementSize(el);
 const { width: width1, height: height1 } = useWindowSize();
@@ -36,13 +36,38 @@ const testMutation = useMutation({
     ElMessage.error(err.message);
   },
   onSettled: () => {
+    operating_id.value = "";
     queryCache.invalidateQueries({ key: ["ai-model-list"] });
   },
 });
 
 const handleTest = (id: string) => {
-  test_id.value = id;
+  operating_id.value = id;
   testMutation.mutate(id);
+};
+
+const deleteMutation = useMutation({
+  key: ["delete-ai-model"],
+  mutation: (id: string) => deleteAiModel(id),
+  onSuccess: (data) => ElMessage({ message: data.detail, type: "success" }),
+  onError: (err) => ElMessage({ message: (err as Error).message, type: "error" }),
+  onSettled: () => {
+    operating_id.value = "";
+    queryCache.invalidateQueries({ key: ["ai-model-list"] });
+  },
+});
+
+const handleDelete = (id: string) => {
+  ElMessageBox.confirm("确定要删除该模型吗？", "警告", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      operating_id.value = id;
+      deleteMutation.mutate(id);
+    })
+    .catch(() => ElMessage({ type: "info", message: "已取消删除" }));
 };
 
 watch(error, (err) => {
@@ -114,7 +139,7 @@ watch([width1, height1], () => {
             {{ dayjs.utc(scope.row.updated_at).tz("Asia/Shanghai").format("YYYY-MM-DD HH:mm:ss") }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column label="操作" align="center" width="280">
           <template #default="scope">
             <el-button
               type="primary"
@@ -129,10 +154,24 @@ watch([width1, height1], () => {
               :icon="Link"
               :link="true"
               @click="handleTest(scope.row.id)"
-              :loading="testMutation.asyncStatus.value === 'loading' && scope.row.id === test_id"
-              :disabled="testMutation.asyncStatus.value === 'loading' && scope.row.id !== test_id"
+              :loading="
+                operating_id === scope.row.id && testMutation.asyncStatus.value === 'loading'
+              "
+              :disabled="operating_id !== '' && operating_id !== scope.row.id"
             >
               测试
+            </el-button>
+            <el-button
+              type="danger"
+              :icon="Delete"
+              :link="true"
+              @click="handleDelete(scope.row.id)"
+              :loading="
+                operating_id === scope.row.id && deleteMutation.asyncStatus.value === 'loading'
+              "
+              :disabled="operating_id !== '' && operating_id !== scope.row.id"
+            >
+              删除
             </el-button>
           </template>
         </el-table-column>

@@ -84,6 +84,12 @@ def update_ai_model(
     return ai_model
 
 
+def delete_ai_model(ai_model: AiModel) -> None:
+    with Session(engine) as session:
+        session.delete(ai_model)
+        session.commit()
+
+
 def get_ai_models() -> Sequence[AiModel]:
     with Session(engine) as session:
         statement = select(AiModel)

@@ -11,6 +11,7 @@ from ai_model.schemas import (
 )
 from ai_model.services import (
     create_ai_model,
+    delete_ai_model,
     get_ai_model_by_id,
     get_ai_model_by_name,
     get_ai_models,
@@ -121,3 +122,15 @@ def get_ai_model_by_id_router(
         created_at=model.created_at,
         updated_at=model.updated_at,
     )
+
+
+@router.delete("/{model_id}", response_model=MessageResponseSchemas)
+def delete_ai_model_router(
+    model_id: UUID,
+    admin: Annotated[Account, Depends(get_current_admin)],
+) -> MessageResponseSchemas:
+    model = get_ai_model_by_id(model_id)
+    if model is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="模型不存在！")
+    delete_ai_model(model)
+    return MessageResponseSchemas(detail="模型已删除！")
