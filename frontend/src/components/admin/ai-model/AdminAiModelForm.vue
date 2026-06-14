@@ -95,9 +95,7 @@ const closeDialog = () => {
     <el-form-item prop="api_key">
       <el-input
         v-model="formModel.api_key"
-        type="password"
         placeholder="请输入API密钥"
-        show-password
       />
     </el-form-item>
     <el-form-item prop="base_url">

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from "vue";
 import { Delete, Edit, Link } from "@element-plus/icons-vue";
-import { deleteAiModel, getAiModelList, testAiModel } from "@/api/ai-model";
-import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useAiModelDialogStore } from "@/stores/ai-model-dialog";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
+import { deleteAiModel, getAiModelList, testAiModel } from "@/api/ai-model";
+import { useDebounceFn, useElementSize, useWindowSize } from "@vueuse/core";
 
 const showTable = ref(true);
 const operating_id = ref("");
@@ -73,11 +73,13 @@ watch(error, (err) => {
   }
 });
 
+const debouncedFn = useDebounceFn(() => {
+  showTable.value = true;
+}, 100);
+
 watch([width1, height1], () => {
   showTable.value = false;
-  setTimeout(() => {
-    showTable.value = true;
-  }, 100);
+  debouncedFn();
 });
 </script>
 
@@ -85,7 +87,7 @@ watch([width1, height1], () => {
   <div
     class="p-4 w-full flex-1 flex flex-col justify-center items-center bg-slate-200 shadow-md rounded-md"
   >
-    <div ref="el" v-loading="isLoading" class="w-full flex-1">
+    <div ref="el" v-loading="isLoading || !showTable" class="w-full flex-1">
       <el-table :height="height0" v-show="showTable" :data="data" stripe>
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="api_key" label="API密钥" align="center" width="180">

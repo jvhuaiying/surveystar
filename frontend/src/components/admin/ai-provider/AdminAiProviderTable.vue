@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from "vue";
-import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useMutation, useQueryCache } from "@pinia/colada";
-import { Check, Delete, Edit, Remove } from "@element-plus/icons-vue";
-import { activateAiProvider, deleteAiProvider, disableAiProvider } from "@/api/ai-provider";
 import { getAiProviderListUtils } from "@/utils/admin/ai-provider";
+import { Check, Delete, Edit, Remove } from "@element-plus/icons-vue";
 import { useAiProviderDialogStore } from "@/stores/ai-provider-dialog";
+import { useDebounceFn, useElementSize, useWindowSize } from "@vueuse/core";
+import { activateAiProvider, deleteAiProvider, disableAiProvider } from "@/api/ai-provider";
+
 const showTable = ref(true);
 const el = useTemplateRef("el");
 const { height: height0 } = useElementSize(el);
@@ -75,11 +76,13 @@ const handleDelete = (id: string) => {
     });
 };
 
+const debouncedFn = useDebounceFn(() => {
+  showTable.value = true;
+}, 100);
+
 watch([width1, height1], () => {
   showTable.value = false;
-  setTimeout(() => {
-    showTable.value = true;
-  }, 100);
+  debouncedFn();
 });
 </script>
 
@@ -87,7 +90,7 @@ watch([width1, height1], () => {
   <div
     class="p-4 w-full flex-1 flex flex-col justify-center items-center bg-slate-200 shadow-md rounded-md"
   >
-    <div ref="el" v-loading="isLoading" class="w-full flex-1">
+    <div ref="el" v-loading="isLoading || !showTable" class="w-full flex-1">
       <el-table :height="height0" v-show="showTable" :data="providerList" stripe>
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="is_active" label="状态" align="center">

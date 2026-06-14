@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from "vue";
-import { useElementSize, useWindowSize } from "@vueuse/core";
 import { useAccountDialogStore } from "@/stores/account-dialog";
 import { useMutation, useQuery, useQueryCache } from "@pinia/colada";
 import { Check, Delete, Remove, Edit } from "@element-plus/icons-vue";
+import { useDebounceFn, useElementSize, useWindowSize } from "@vueuse/core";
 import { activateAccount, deleteAccount, disableAccount, getAccountList } from "@/api/account";
 
 const showTable = ref(true);
@@ -31,11 +31,13 @@ watch(error, (err) => {
   }
 });
 
+const debouncedFn = useDebounceFn(() => {
+  showTable.value = true;
+}, 100);
+
 watch([width1, height1], () => {
   showTable.value = false;
-  setTimeout(() => {
-    showTable.value = true;
-  }, 100);
+  debouncedFn();
 });
 
 const { mutate: mutateDisable } = useMutation({
@@ -85,7 +87,7 @@ const handleEdit = (id: string) => {
   <div
     class="p-4 w-full flex-1 flex flex-col justify-center items-center bg-slate-200 shadow-md rounded-md"
   >
-    <div ref="el" v-loading="isLoading" class="w-full flex-1">
+    <div ref="el" v-loading="isLoading || !showTable" class="w-full flex-1">
       <el-table :height="height0" v-show="showTable" :data="accountList" stripe>
         <el-table-column prop="nickname" label="昵称" align="center" />
         <el-table-column prop="email" label="邮箱" align="center" />
@@ -103,33 +105,33 @@ const handleEdit = (id: string) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="240">
+        <el-table-column label="操作" align="center" width="360">
           <template #default="scope">
-            <el-button type="success" size="small" :icon="Edit" @click="handleEdit(scope.row.id)">
+            <el-button type="success" :icon="Edit" :link="true" @click="handleEdit(scope.row.id)">
               编辑
             </el-button>
             <el-button
               v-if="scope.row.status === 'active'"
               type="warning"
-              size="small"
               :icon="Remove"
+              :link="true"
               @click="handleDisable(scope.row.id)"
             >
               禁用
             </el-button>
             <el-button
-              v-if="scope.row.status === 'disabled'"
+              v-else
               type="primary"
-              size="small"
               :icon="Check"
+              :link="true"
               @click="handleActivate(scope.row.id)"
             >
               激活
             </el-button>
             <el-button
               type="danger"
-              size="small"
               :icon="Delete"
+              :link="true"
               @click="handleDelete(scope.row.id)"
             >
               删除
