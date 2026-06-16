@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, create_engine
 from database.account import Account
 from database.ai_model import AiModel
 from database.ai_provider import AiProvider
+from database.prompt import SystemPrompt
 from database.website_info import WebsiteInfo
 
 engine = create_engine(
@@ -20,5 +21,6 @@ __all__ = [
     "Account",
     "AiModel",
     "AiProvider",
+    "SystemPrompt",
     "WebsiteInfo",
 ]

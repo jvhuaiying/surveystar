@@ -93,10 +93,7 @@ const closeDialog = () => {
       <el-input v-model="formModel.name" placeholder="请输入模型名称" />
     </el-form-item>
     <el-form-item prop="api_key">
-      <el-input
-        v-model="formModel.api_key"
-        placeholder="请输入API密钥"
-      />
+      <el-input v-model="formModel.api_key" placeholder="请输入API密钥" />
     </el-form-item>
     <el-form-item prop="base_url">
       <el-input v-model="formModel.base_url" placeholder="请输入基础URL" />

@@ -41,6 +41,11 @@ const router = createRouter({
           name: "adminAiModel",
           component: () => import("@/views/admin/AdminAiModelView.vue"),
         },
+        {
+          path: "prompt",
+          name: "adminPrompt",
+          component: () => import("@/views/admin/AdminPromptView.vue"),
+        },
       ],
     },
   ],

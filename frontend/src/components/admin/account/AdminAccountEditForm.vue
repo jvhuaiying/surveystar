@@ -60,7 +60,10 @@ const { mutate: submitAccount, isLoading: isSubmitting } = useMutation({
   onError: (err: Error) => {
     ElMessage({ message: err.message, type: "error" });
   },
-  onSettled: () => queryCache.invalidateQueries({ key: ["account-list"] }),
+  onSettled: () => {
+    queryCache.invalidateQueries({ key: ["account-list"] });
+    queryCache.invalidateQueries({ key: ["system-prompt-list"] });
+  },
 });
 
 const submitForm = async (formEl: FormInstance | undefined) => {
